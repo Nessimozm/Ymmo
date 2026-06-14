@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Ymmo — Connexion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --black:  #0a0a0a;
+            --white:  #fafaf8;
+            --gold:   #b8945a;
+            --gold-lt:#d4af7a;
+            --gray:   #6b6b6b;
+            --light:  #f0ede8;
+            --border: #e0dbd2;
+            --error:  #c0392b;
+            --success:#27ae60;
+            --serif:  'Cormorant Garamond', Georgia, serif;
+            --sans:   'Raleway', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            font-family: var(--sans);
+            font-weight: 300;
+            background: var(--white);
+        }
+
+        /* ── PANNEAU GAUCHE (visuel) ──────────────────── */
+        .panel-left {
+            background: var(--black);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel-left::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 500px; height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(184,148,90,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .panel-left::after {
+            content: '';
+            position: absolute;
+            bottom: -80px; left: -80px;
+            width: 400px; height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(184,148,90,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .panel-logo {
+            font-family: var(--serif);
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            color: var(--white);
+            text-decoration: none;
+            position: relative; z-index: 1;
+        }
+
+        .panel-logo span { color: var(--gold); }
+
+        .panel-content {
+            position: relative; z-index: 1;
+        }
+
+        .panel-eyebrow {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+        }
+
+        .panel-title {
+            font-family: var(--serif);
+            font-size: clamp(2.5rem, 4vw, 4rem);
+            font-weight: 300;
+            line-height: 1.1;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+        }
+
+        .panel-title em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .panel-desc {
+            font-size: 0.8rem;
+            line-height: 1.9;
+            color: #888;
+            max-width: 320px;
+        }
+
+        .panel-stats {
+            display: flex;
+            gap: 2rem;
+            position: relative; z-index: 1;
+        }
+
+        .stat-item { display: flex; flex-direction: column; gap: 0.3rem; }
+
+        .stat-value {
+            font-family: var(--serif);
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--white);
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        /* ── PANNEAU DROIT (formulaire) ───────────────── */
+        .panel-right {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem 5rem;
+            background: var(--white);
+        }
+
+        .form-header { margin-bottom: 2.5rem; }
+
+        .form-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            font-family: var(--sans);
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            background: transparent;
+            color: var(--gray);
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; left: 0; right: 0;
+            height: 2px;
+            background: var(--black);
+            transform: scaleX(0);
+            transition: transform 0.2s;
+        }
+
+        .tab-btn.active { color: var(--black); }
+        .tab-btn.active::after { transform: scaleX(1); }
+
+        .form-title {
+            font-family: var(--serif);
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--black);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-subtitle {
+            font-size: 0.75rem;
+            color: var(--gray);
+            letter-spacing: 0.03em;
+        }
+
+        /* ── FORMULAIRE ───────────────────────────────── */
+        .form { display: flex; flex-direction: column; gap: 1.2rem; }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .field { display: flex; flex-direction: column; gap: 0.4rem; }
+
+        .field label {
+            font-size: 0.6rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        .field input {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            font-weight: 300;
+            padding: 0.85rem 0;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            background: transparent;
+            color: var(--black);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .field input:focus { border-bottom-color: var(--black); }
+        .field input::placeholder { color: #ccc; }
+
+        /* Message d'erreur / succès */
+        .msg {
+            font-size: 0.75rem;
+            padding: 0.75rem 1rem;
+            display: none;
+        }
+
+        .msg.error   { background: #fdf0ef; color: var(--error); border-left: 3px solid var(--error); }
+        .msg.success { background: #edfaf2; color: var(--success); border-left: 3px solid var(--success); }
+        .msg.show    { display: block; }
+
+        /* Bouton submit */
+        .btn-submit {
+            font-family: var(--sans);
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 1rem;
+            border: 1px solid var(--black);
+            background: var(--black);
+            color: var(--white);
+            cursor: pointer;
+            transition: all 0.25s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-submit:hover { background: var(--gold); border-color: var(--gold); }
+        .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .form-footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--gray);
+            margin-top: 1rem;
+        }
+
+        .form-footer a {
+            color: var(--black);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* ── RESPONSIVE ───────────────────────────────── */
+        @media (max-width: 768px) {
+            body { grid-template-columns: 1fr; }
+            .panel-left { display: none; }
+            .panel-right { padding: 2.5rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- PANNEAU GAUCHE -->
+<div class="panel-left">
+    <a href="index.html" class="panel-logo">YM<span>M</span>O</a>
+
+    <div class="panel-content">
+        <p class="panel-eyebrow">Espace personnel</p>
+        <h1 class="panel-title">Votre patrimoine,<br/><em>notre priorité</em></h1>
+        <p class="panel-desc">
+            Accédez à votre espace pour consulter vos favoris, contacter nos agents
+            et suivre vos projets immobiliers en temps réel.
+        </p>
+    </div>
+
+    <div class="panel-stats">
+        <div class="stat-item">
+            <span class="stat-value">12</span>
+            <span class="stat-label">Agences</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">500+</span>
+            <span class="stat-label">Biens</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">98%</span>
+            <span class="stat-label">Satisfaits</span>
+        </div>
+    </div>
+</div>
+
+<!-- PANNEAU DROIT -->
+<div class="panel-right">
+
+    <!-- Tabs -->
+    <div class="form-tabs">
+        <button class="tab-btn active" onclick="switchTab('login')">Connexion</button>
+        <button class="tab-btn" onclick="switchTab('register')">Créer un compte</button>
+    </div>
+
+    <!-- Message feedback -->
+    <div class="msg" id="msg"></div>
+
+    <!-- ── FORMULAIRE LOGIN ─────────────────────── -->
+    <div id="form-login">
+        <div class="form-header">
+            <h2 class="form-title">Bon retour.</h2>
+            <p class="form-subtitle">Connectez-vous à votre espace personnel</p>
+        </div>
+
+        <div class="form">
+            <div class="field">
+                <label>Adresse email</label>
+                <input type="email" id="login-email" placeholder="votre@email.fr" autocomplete="email"/>
+            </div>
+            <div class="field">
+                <label>Mot de passe</label>
+                <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/>
+            </div>
+            <button class="btn-submit" id="btn-login" onclick="handleLogin()">
+                Se connecter
+            </button>
+        </div>
+
+        <p class="form-footer">
+            Pas encore de compte ?
+            <a onclick="switchTab('register')">Créer un compte</a>
+        </p>
+    </div>
+
+    <!-- ── FORMULAIRE REGISTER ─────────────────── -->
+    <div id="form-register" style="display:none">
+        <div class="form-header">
+            <h2 class="form-title">Bienvenue.</h2>
+            <p class="form-subtitle">Créez votre espace en quelques secondes</p>
+        </div>
+
+        <div class="form">
+            <div class="form-row">
+                <div class="field">
+                    <label>Prénom</label>
+                    <input type="text" id="reg-firstname" placeholder="Jean" autocomplete="given-name"/>
+                </div>
+                <div class="field">
+                    <label>Nom</label>
+                    <input type="text" id="reg-lastname" placeholder="Dupont" autocomplete="family-name"/>
+                </div>
+            </div>
+            <div class="field">
+                <label>Adresse email</label>
+                <input type="email" id="reg-email" placeholder="votre@email.fr" autocomplete="email"/>
+            </div>
+            <div class="field">
+                <label>Téléphone <span style="color:#ccc;font-size:0.55rem">(optionnel)</span></label>
+                <input type="tel" id="reg-phone" placeholder="+33 6 12 34 56 78"/>
+            </div>
+            <div class="field">
+                <label>Mot de passe <span style="color:#ccc;font-size:0.55rem">(8 caractères min.)</span></label>
+                <input type="password" id="reg-password" placeholder="••••••••" autocomplete="new-password"/>
+            </div>
+            <button class="btn-submit" id="btn-register" onclick="handleRegister()">
+                Créer mon compte
+            </button>
+        </div>
+
+        <p class="form-footer">
+            Déjà un compte ?
+            <a onclick="switchTab('login')">Se connecter</a>
+        </p>
+    </div>
+
+</div>
+
+<script>
+    const API = 'http://localhost:8081/api/v1';
+
+    // ── Switch entre login et register ─────────────
+    function switchTab(tab) {
+        document.getElementById('form-login').style.display    = tab === 'login'    ? 'block' : 'none';
+        document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none';
+
+        document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
+        });
+
+        hideMsg();
+    }
+
+    // ── Messages ────────────────────────────────────
+    function showMsg(text, type) {
+        const el = document.getElementById('msg');
+        el.textContent = text;
+        el.className = `msg ${type} show`;
+    }
+
+    function hideMsg() {
+        document.getElementById('msg').className = 'msg';
+    }
+
+    // ── Sauvegarde du token ─────────────────────────
+    function saveAuth(token, user) {
+        sessionStorage.setItem('ymmo_token', token);
+        sessionStorage.setItem('ymmo_user', JSON.stringify(user));
+    }
+
+    // ── Login ───────────────────────────────────────
+    async function handleLogin() {
+        const email    = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+        const btn      = document.getElementById('btn-login');
+
+        if (!email || !password) {
+            showMsg('Veuillez remplir tous les champs.', 'error');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Connexion…';
+        hideMsg();
+
+        try {
+            const res = await fetch(`${API}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                showMsg(data.error || 'Identifiants invalides.', 'error');
+                return;
+            }
+
+            saveAuth(data.token, data.user);
+            showMsg('Connexion réussie ! Redirection…', 'success');
+
+            // Redirige selon le rôle
+            setTimeout(() => {
+                if (data.user.role === 'agent' || data.user.role === 'admin') {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    window.location.href = 'properties.html';
+                }
+            }, 1000);
+
+        } catch (err) {
+            showMsg('Erreur de connexion au serveur.', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Se connecter';
+        }
+    }
+
+    // ── Register ────────────────────────────────────
+    async function handleRegister() {
+        const firstName = document.getElementById('reg-firstname').value.trim();
+        const lastName  = document.getElementById('reg-lastname').value.trim();
+        const email     = document.getElementById('reg-email').value.trim();
+        const phone     = document.getElementById('reg-phone').value.trim();
+        const password  = document.getElementById('reg-password').value;
+        const btn       = document.getElementById('btn-register');
+
+        if (!firstName || !lastName || !email || !password) {
+            showMsg('Veuillez remplir tous les champs obligatoires.', 'error');
+            return;
+        }
+
+        if (password.length < 8) {
+            showMsg('Le mot de passe doit contenir au moins 8 caractères.', 'error');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Création…';
+        hideMsg();
+
+        try {
+            const body = { first_name: firstName, last_name: lastName, email, password };
+            if (phone) body.phone = phone;
+
+            const res = await fetch(`${API}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                showMsg(data.error || 'Une erreur est survenue.', 'error');
+                return;
+            }
+
+            saveAuth(data.token, data.user);
+            showMsg('Compte créé avec succès ! Redirection…', 'success');
+
+            setTimeout(() => {
+                window.location.href = 'properties.html';
+            }, 1000);
+
+        } catch (err) {
+            showMsg('Erreur de connexion au serveur.', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Créer mon compte';
+        }
+    }
+
+    // ── Enter pour valider ──────────────────────────
+    document.addEventListener('keydown', e => {
+        if (e.key !== 'Enter') return;
+        const loginVisible = document.getElementById('form-login').style.display !== 'none';
+        if (loginVisible) handleLogin();
+        else handleRegister();
+    });
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 package domain
 
-//  Auth
+// ── Auth ──────────────────────────────────────────────────────────────────────
 
 // RegisterRequest payload pour POST /auth/register
 type RegisterRequest struct {
@@ -8,7 +8,7 @@ type RegisterRequest struct {
 	LastName  string `json:"last_name"  binding:"required,min=2"`
 	Email     string `json:"email"      binding:"required,email"`
 	Password  string `json:"password"   binding:"required,min=8"`
-	Phone     string `json:"phone"      binding:"omitempty,e164"`
+	Phone     string `json:"phone"      binding:"omitempty,e164"` // format international ex: +33612345678
 }
 
 // LoginRequest payload pour POST /auth/login
@@ -17,11 +17,13 @@ type LoginRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
-// AuthResponse retourné après login ou register
+// AuthResponse retourné après login ou register (contient le JWT)
 type AuthResponse struct {
 	Token string `json:"token"`
 	User  User   `json:"user"`
 }
+
+// ── Property ──────────────────────────────────────────────────────────────────
 
 // CreatePropertyRequest payload pour POST /properties
 type CreatePropertyRequest struct {
@@ -41,7 +43,7 @@ type CreatePropertyRequest struct {
 }
 
 // UpdatePropertyRequest payload pour PUT /properties/:id
-// Tous les champs sont optionnels → seuls les champs envoyés sont mis à jour
+// Tous les champs sont optionnels (pointeurs) → seuls les champs envoyés sont mis à jour
 type UpdatePropertyRequest struct {
 	Title       *string          `json:"title"`
 	Description *string          `json:"description"`
@@ -77,21 +79,37 @@ type PropertyListResponse struct {
 	TotalPages int        `json:"total_pages"`
 }
 
-//  Contact
+// ── Contact / Messages ───────────────────────────────────────────────────────
 
 // ContactRequest payload pour POST /properties/:id/contact
+// (premier message d'une conversation, envoyé par un client)
 type ContactRequest struct {
 	Message string `json:"message" binding:"required,min=10"`
 }
 
-//  Admin
+// ReplyRequest payload pour POST /messages/:id/reply
+// (réponse dans une conversation existante, par le client OU l'agent)
+type ReplyRequest struct {
+	Message string `json:"message" binding:"required,min=2"`
+}
+
+// MessageThreadItem enrichit ContactMessage avec le contexte nécessaire
+// à l'affichage (titre du bien, nom de l'autre participant), sans exposer
+// d'informations sensibles comme l'email.
+type MessageThreadItem struct {
+	ContactMessage
+	PropertyTitle  string `json:"property_title"`
+	OtherPartyName string `json:"other_party_name"` // pour un agent : nom du client, et vice-versa
+}
+
+// ── Admin ─────────────────────────────────────────────────────────────────────
 
 // UpdateRoleRequest payload pour PATCH /admin/users/:id/role
 type UpdateRoleRequest struct {
 	Role Role `json:"role" binding:"required,oneof=client agent admin"`
 }
 
-// Stats
+// ── Stats ─────────────────────────────────────────────────────────────────────
 
 // MarketStats retourné par GET /stats/market
 type MarketStats struct {

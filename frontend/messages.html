@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ymmo — Mes messages</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:  #0a0a0a;
+      --white:  #fafaf8;
+      --gold:   #b8945a;
+      --gold-lt:#d4af7a;
+      --gray:   #6b6b6b;
+      --light:  #f0ede8;
+      --border: #e0dbd2;
+      --error:  #c0392b;
+      --serif:  'Cormorant Garamond', Georgia, serif;
+      --sans:   'Raleway', sans-serif;
+    }
+
+    body {
+      background: var(--white); color: var(--black);
+      font-family: var(--sans); font-weight: 300; min-height: 100vh;
+    }
+
+    /* ── NAVBAR ─────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4rem; height: 80px;
+      background: rgba(250,250,248,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--serif); font-size: 1.8rem; font-weight: 300;
+      letter-spacing: 0.15em; color: var(--black); text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--sans); font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gray); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--black); }
+
+    .nav-actions { display: flex; gap: 1rem; align-items: center; }
+
+    .btn-outline {
+      font-family: var(--sans); font-size: 0.65rem; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 0.6rem 1.4rem; border: 1px solid var(--black);
+      background: transparent; color: var(--black);
+      cursor: pointer; text-decoration: none; transition: all 0.2s;
+    }
+    .btn-outline:hover { background: var(--black); color: var(--white); }
+
+    /* ── PAGE HEADER ───────────────────────────────── */
+    .page-header {
+      padding: 140px 4rem 2.5rem;
+      max-width: 1300px; margin: 0 auto;
+    }
+
+    .page-eyebrow {
+      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem;
+    }
+
+    .page-title {
+      font-family: var(--serif); font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 300; letter-spacing: -0.01em; color: var(--black);
+    }
+
+    .page-sub {
+      font-size: 0.85rem; color: var(--gray); margin-top: 0.8rem;
+      max-width: 480px; line-height: 1.8;
+    }
+
+    /* ── MESSAGERIE ───────────────────────────────── */
+    .messages-wrapper { max-width: 1300px; margin: 0 auto; padding: 0 4rem 5rem; }
+
+    .messages-layout {
+      display: grid; grid-template-columns: 360px 1fr;
+      border: 1px solid var(--border); background: var(--white);
+      min-height: 560px;
+    }
+
+    /* Liste des conversations */
+    .conversations-list {
+      border-right: 1px solid var(--border);
+      max-height: 650px; overflow-y: auto;
+    }
+
+    .conversation-item {
+      padding: 1.1rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+      border-left: 3px solid transparent;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .conversation-item:hover  { background: var(--light); }
+    .conversation-item.active { background: var(--light); border-left-color: var(--gold); }
+    .conversation-item:last-child { border-bottom: none; }
+
+    .conversation-property {
+      font-family: var(--serif); font-size: 0.95rem; font-weight: 400;
+      color: var(--black); margin-bottom: 0.35rem;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .conversation-item.unread .conversation-property { font-weight: 600; }
+
+    .conversation-unread-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gold); flex-shrink: 0;
+    }
+
+    .conversation-other {
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem;
+    }
+
+    .conversation-preview {
+      font-size: 0.75rem; color: var(--gray); line-height: 1.5;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 0.35rem;
+    }
+
+    .conversation-date {
+      font-size: 0.6rem; color: var(--gray); letter-spacing: 0.05em;
+    }
+
+    /* Fil de discussion */
+    .conversation-thread { display: flex; flex-direction: column; height: 650px; }
+
+    .thread-header { padding: 1.3rem 1.8rem; border-bottom: 1px solid var(--border); }
+    .thread-header-title { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; }
+    .thread-header-sub {
+      font-size: 0.62rem; font-weight: 500; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--gold); margin-top: 0.35rem;
+    }
+    .thread-header-link {
+      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em;
+      color: var(--gray); text-decoration: underline; margin-top: 0.5rem;
+      display: inline-block;
+    }
+    .thread-header-link:hover { color: var(--black); }
+
+    .thread-messages {
+      flex: 1; overflow-y: auto; padding: 1.6rem 1.8rem;
+      display: flex; flex-direction: column; gap: 0.9rem;
+    }
+
+    .thread-bubble {
+      max-width: 70%; padding: 0.85rem 1.15rem;
+      font-size: 0.82rem; line-height: 1.7; word-wrap: break-word;
+    }
+    /* "from-client" = MOI (le visiteur connecté) → aligné à droite, sombre */
+    .thread-bubble.from-client {
+      align-self: flex-end; background: var(--black); color: var(--white);
+    }
+    /* "from-agent" = L'AGENT → aligné à gauche, clair */
+    .thread-bubble.from-agent {
+      align-self: flex-start; background: var(--light); color: var(--black);
+      border: 1px solid var(--border);
+    }
+    .thread-bubble-meta {
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.15em;
+      text-transform: uppercase; margin-bottom: 0.4rem; opacity: 0.55;
+    }
+
+    .thread-empty {
+      display: flex; align-items: center; justify-content: center;
+      height: 100%; text-align: center; padding: 2rem;
+      font-family: var(--serif); font-size: 1.2rem; font-style: italic;
+      color: var(--gray);
+    }
+    .thread-empty a { color: var(--gold); text-decoration: underline; font-style: normal; }
+
+    .thread-reply {
+      border-top: 1px solid var(--border); padding: 1.2rem 1.8rem;
+      display: flex; gap: 1rem; align-items: flex-end;
+    }
+    .thread-reply textarea {
+      flex: 1; font-family: var(--sans); font-size: 0.85rem; font-weight: 300;
+      padding: 0.75rem; border: 1px solid var(--border); background: var(--light);
+      color: var(--black); outline: none; resize: none; transition: border-color 0.2s;
+    }
+    .thread-reply textarea:focus { border-color: var(--black); background: var(--white); }
+    .thread-reply textarea::placeholder { color: #bbb; }
+
+    .btn-send {
+      flex-shrink: 0; font-family: var(--sans); font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase; padding: 0.9rem 1.8rem;
+      border: 1px solid var(--black); background: var(--black); color: var(--white);
+      cursor: pointer; transition: all 0.25s;
+    }
+    .btn-send:hover { background: var(--gold); border-color: var(--gold); }
+    .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── EMPTY / LOADING STATE (page entière) ───────── */
+    .full-empty {
+      grid-column: 1 / -1; padding: 5rem 2rem; text-align: center;
+    }
+    .full-empty p {
+      font-family: var(--serif); font-size: 1.4rem; font-weight: 300;
+      font-style: italic; color: var(--gray); margin-bottom: 1rem;
+    }
+    .full-empty a {
+      font-size: 0.7rem; font-weight: 500; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--black);
+      border-bottom: 1px solid var(--black); padding-bottom: 0.3rem;
+      text-decoration: none;
+    }
+
+    .loading-state {
+      padding: 3rem; text-align: center;
+      font-family: var(--serif); font-size: 1.1rem; font-style: italic;
+      color: var(--gray);
+    }
+
+    /* ── FOOTER ──────────────────────────────────── */
+    footer {
+      background: var(--black); padding: 2rem 4rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-logo { font-family: var(--serif); font-size: 1.4rem; font-weight: 300; letter-spacing: 0.15em; color: var(--white); }
+    .footer-logo span { color: var(--gold); }
+    .footer-copy { font-size: 0.65rem; color: #555; letter-spacing: 0.1em; }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 1024px) {
+      .messages-layout { grid-template-columns: 1fr; }
+      .conversations-list { border-right: none; border-bottom: 1px solid var(--border); max-height: 260px; }
+      .conversation-thread { height: 480px; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 0 1.5rem; }
+      .nav-links { display: none; }
+      .page-header, .messages-wrapper { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .page-header { padding-top: 110px; }
+      .thread-bubble { max-width: 88%; }
+      .thread-reply { flex-direction: column; align-items: stretch; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a href="index.html" class="nav-logo">YM<span>M</span>O</a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">À propos</a></li>
+      <li><a href="properties.html?transaction=rental">Louer</a></li>
+      <li><a href="properties.html?transaction=sale">Acheter</a></li>
+      <li><a href="messages.html" class="active">Mes messages</a></li>
+    </ul>
+    <div class="nav-actions" id="nav-actions">
+      <a href="login.html" class="btn-outline">Connexion</a>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <p class="page-eyebrow">Messagerie</p>
+    <h1 class="page-title">Mes messages</h1>
+    <p class="page-sub">Suivez vos échanges avec les agents Ymmo et répondez directement depuis votre espace.</p>
+  </div>
+
+  <!-- MESSAGERIE -->
+  <div class="messages-wrapper">
+    <div class="messages-layout" id="messages-layout">
+      <div class="full-empty">
+        <p>Chargement…</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">YM<span>M</span>O</div>
+    <p class="footer-copy">© 2024 Ymmo Groupe Immobilier · Tous droits réservés</p>
+  </footer>
+
+  <script>
+    const API = 'http://localhost:8081/api/v1';
+    let allConversations = [];
+    let activeConversation = null;
+
+    // ── Auth ─────────────────────────────────────────
+    function getToken() { return sessionStorage.getItem('ymmo_token'); }
+    function getUser() {
+      const u = sessionStorage.getItem('ymmo_user');
+      return u ? JSON.parse(u) : null;
+    }
+    function authHeaders() {
+      return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getToken()}`
+      };
+    }
+    function logout() {
+      sessionStorage.removeItem('ymmo_token');
+      sessionStorage.removeItem('ymmo_user');
+      window.location.href = 'login.html';
+    }
+
+    // Met à jour la navbar selon l'état de connexion
+    function renderNav() {
+      const user = getUser();
+      const actions = document.getElementById('nav-actions');
+      if (!user) return; // reste sur "Connexion" (redirection gérée par checkAuth)
+
+      let html = '';
+      if (user.role === 'agent' || user.role === 'admin') {
+        html += `<a href="dashboard.html" class="btn-outline">Dashboard</a>`;
+      }
+      html += `<button class="btn-outline" onclick="logout()" style="cursor:pointer">Déconnexion</button>`;
+      actions.innerHTML = html;
+    }
+
+    function checkAuth() {
+      const token = getToken();
+      const user  = getUser();
+      if (!token || !user) {
+        window.location.href = 'login.html';
+        return null;
+      }
+      return user;
+    }
+
+    // ── Échappement HTML ─────────────────────────────
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str ?? '';
+      return div.innerHTML;
+    }
+
+    // ── Chargement des conversations ─────────────────
+    async function loadMessages() {
+      const layout = document.getElementById('messages-layout');
+
+      try {
+        const res = await fetch(`${API}/messages`, { headers: authHeaders() });
+        const items = await res.json();
+
+        if (!items || items.length === 0) {
+          layout.innerHTML = `
+            <div class="full-empty">
+              <p>Vous n'avez aucune conversation pour le moment</p>
+              <a href="properties.html">Découvrir nos biens →</a>
+            </div>`;
+          allConversations = [];
+          return;
+        }
+
+        // Groupe par conversation (property_id + agent_id)
+        const groups = new Map();
+        for (const m of items) {
+          const key = `${m.property_id}-${m.agent_id}`;
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key).push(m);
+        }
+
+        allConversations = Array.from(groups.entries()).map(([key, msgs]) => {
+          const last = msgs[msgs.length - 1];
+          return {
+            key,
+            propertyId: last.property_id,
+            propertyTitle: last.property_title,
+            otherPartyName: last.other_party_name, // nom de l'agent
+            messages: msgs,
+            lastMessage: last,
+          };
+        });
+
+        allConversations.sort((a, b) =>
+          new Date(b.lastMessage.created_at) - new Date(a.lastMessage.created_at)
+        );
+
+        // Rebuild le layout 2 colonnes si besoin (après un état vide précédent)
+        if (!document.getElementById('conversations-list')) {
+          layout.innerHTML = `
+            <div class="conversations-list" id="conversations-list"></div>
+            <div class="conversation-thread" id="conversation-thread">
+              <div class="thread-empty">Sélectionnez une conversation</div>
+            </div>`;
+        }
+
+        renderConversationsList();
+
+        const stillExists = activeConversation
+          ? allConversations.find(c => c.key === activeConversation.key)
+          : null;
+
+        if (stillExists) {
+          openConversation(stillExists.key, false);
+        } else if (allConversations.length > 0) {
+          openConversation(allConversations[0].key, false);
+        }
+
+      } catch (err) {
+        layout.innerHTML = `
+          <div class="full-empty">
+            <p>Erreur de chargement des messages</p>
+          </div>`;
+      }
+    }
+
+    function renderConversationsList() {
+      const list = document.getElementById('conversations-list');
+      if (!list) return;
+
+      list.innerHTML = allConversations.map(c => {
+        const hasUnread = c.messages.some(m => m.sender_role === 'agent' && !m.is_read);
+        const isActive  = activeConversation && activeConversation.key === c.key;
+        const prefix    = c.lastMessage.sender_role === 'client' ? 'Vous : ' : '';
+
+        return `
+          <div class="conversation-item ${isActive ? 'active' : ''} ${hasUnread ? 'unread' : ''}"
+               onclick="openConversation('${c.key}')">
+            <div class="conversation-property">
+              ${hasUnread ? '<span class="conversation-unread-dot"></span>' : ''}
+              ${escapeHtml(c.propertyTitle)}
+            </div>
+            <div class="conversation-other">${escapeHtml(c.otherPartyName)}</div>
+            <div class="conversation-preview">${prefix}${escapeHtml(c.lastMessage.message)}</div>
+            <div class="conversation-date">${new Date(c.lastMessage.created_at).toLocaleString('fr-FR')}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openConversation(key, scrollToBottom = true) {
+      const conv = allConversations.find(c => c.key === key);
+      if (!conv) return;
+
+      activeConversation = conv;
+      renderConversationsList();
+      renderThread(conv);
+
+      if (scrollToBottom) {
+        const msgsEl = document.getElementById('thread-messages');
+        if (msgsEl) msgsEl.scrollTop = msgsEl.scrollHeight;
+      }
+
+      // Marque comme lus les messages de l'agent non encore lus par le client
+      const unread = conv.messages.filter(m => m.sender_role === 'agent' && !m.is_read);
+      if (unread.length > 0) {
+        unread.forEach(m => {
+          m.is_read = true;
+          markMessageAsRead(m.id);
+        });
+        renderConversationsList();
+      }
+    }
+
+    function renderThread(conv) {
+      const thread = document.getElementById('conversation-thread');
+
+      thread.innerHTML = `
+        <div class="thread-header">
+          <div class="thread-header-title">${escapeHtml(conv.propertyTitle)}</div>
+          <div class="thread-header-sub">Conversation avec ${escapeHtml(conv.otherPartyName)}</div>
+          <a href="property.html?id=${conv.propertyId}" class="thread-header-link">Voir l'annonce →</a>
+        </div>
+        <div class="thread-messages" id="thread-messages">
+          ${conv.messages.map(m => `
+            <div class="thread-bubble from-${m.sender_role}">
+              <div class="thread-bubble-meta">
+                ${m.sender_role === 'client' ? 'Vous' : escapeHtml(conv.otherPartyName)}
+                · ${new Date(m.created_at).toLocaleString('fr-FR')}
+              </div>
+              ${escapeHtml(m.message)}
+            </div>
+          `).join('')}
+        </div>
+        <div class="thread-reply">
+          <textarea id="reply-text" rows="2" placeholder="Écrire une réponse…"
+                    onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendReply();}"></textarea>
+          <button class="btn-send" onclick="sendReply()">Envoyer</button>
+        </div>
+      `;
+
+      const msgsEl = document.getElementById('thread-messages');
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
+
+    async function sendReply() {
+      if (!activeConversation) return;
+
+      const textarea = document.getElementById('reply-text');
+      const text = textarea.value.trim();
+      if (!text) return;
+
+      const btn = document.querySelector('.btn-send');
+      btn.disabled = true;
+      btn.textContent = 'Envoi…';
+
+      // N'importe quel message du fil permet de retrouver la conversation
+      const anchorId = activeConversation.messages[0].id;
+
+      try {
+        const res = await fetch(`${API}/messages/${anchorId}/reply`, {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ message: text })
+        });
+
+        if (res.ok) {
+          textarea.value = '';
+          await loadMessages();
+        } else {
+          const data = await res.json();
+          alert(data.error || 'Erreur lors de l\'envoi du message.');
+        }
+      } catch {
+        alert('Erreur de connexion au serveur.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Envoyer';
+      }
+    }
+
+    async function markMessageAsRead(id) {
+      try {
+        await fetch(`${API}/messages/${id}/read`, {
+          method: 'PATCH',
+          headers: authHeaders()
+        });
+      } catch {}
+    }
+
+    // ── Init ─────────────────────────────────────────
+    function init() {
+      const user = checkAuth();
+      if (!user) return;
+
+      renderNav();
+      loadMessages();
+    }
+
+    init();
+  </script>
+</body>
+</html>

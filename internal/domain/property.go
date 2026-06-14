@@ -37,7 +37,7 @@ type Property struct {
 	Title       string          `json:"title"            db:"title"`
 	Description string          `json:"description"      db:"description"`
 	Price       float64         `json:"price"            db:"price"`
-	Surface     float64         `json:"surface"          db:"surface"`
+	Surface     float64         `json:"surface"          db:"surface"` // en m²
 	Rooms       int             `json:"rooms"            db:"rooms"`
 	Bedrooms    int             `json:"bedrooms"         db:"bedrooms"`
 	Type        PropertyType    `json:"type"             db:"type"`
@@ -49,7 +49,7 @@ type Property struct {
 	Latitude    float64         `json:"latitude"         db:"latitude"`
 	Longitude   float64         `json:"longitude"        db:"longitude"`
 	AgentID     uint            `json:"agent_id"         db:"agent_id"`
-	Agent       *User           `json:"agent,omitempty"`
+	Agent       *User           `json:"agent,omitempty"` // chargé en JOIN si besoin
 	Images      []PropertyImage `json:"images,omitempty"`
 	ViewCount   int             `json:"view_count"       db:"view_count"`
 	CreatedAt   time.Time       `json:"created_at"       db:"created_at"`
@@ -65,12 +65,18 @@ type PropertyImage struct {
 	CreatedAt  time.Time `json:"created_at"  db:"created_at"`
 }
 
-// ContactMessage représente un message envoyé à un agent
+// ContactMessage représente un message échangé entre un client et un agent
+// à propos d'un bien. Une CONVERSATION regroupe tous les messages partageant
+// le même triplet (PropertyID, ClientID, AgentID). SenderRole indique qui a
+// écrit CE message précis ("client" ou "agent") — ClientID et AgentID restent
+// constants sur tout le fil, même quand l'agent répond.
 type ContactMessage struct {
 	ID         uint      `json:"id"          db:"id"`
 	PropertyID uint      `json:"property_id" db:"property_id"`
-	SenderID   uint      `json:"sender_id"   db:"sender_id"`
+	ClientID   uint      `json:"client_id"   db:"client_id"`
 	AgentID    uint      `json:"agent_id"    db:"agent_id"`
+	SenderID   uint      `json:"sender_id"   db:"sender_id"`
+	SenderRole Role      `json:"sender_role" db:"sender_role"` // RoleClient ou RoleAgent
 	Message    string    `json:"message"     db:"message"`
 	IsRead     bool      `json:"is_read"     db:"is_read"`
 	CreatedAt  time.Time `json:"created_at"  db:"created_at"`

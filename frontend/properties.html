@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ymmo — Nos Biens</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0a0a0a;
+      --white:   #fafaf8;
+      --gold:    #b8945a;
+      --gold-lt: #d4af7a;
+      --gray:    #6b6b6b;
+      --light:   #f0ede8;
+      --border:  #e0dbd2;
+      --serif:   'Cormorant Garamond', Georgia, serif;
+      --sans:    'Raleway', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--white);
+      color: var(--black);
+      font-family: var(--sans);
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* ── NAVBAR ─────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4rem;
+      height: 80px;
+      background: rgba(250,250,248,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.8rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      color: var(--black);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--gold); }
+
+    .nav-links {
+      display: flex; gap: 2.5rem; list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--sans);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--black); }
+
+    .nav-actions { display: flex; gap: 1rem; align-items: center; }
+
+    .btn-outline {
+      font-family: var(--sans);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.4rem;
+      border: 1px solid var(--black);
+      background: transparent;
+      color: var(--black);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-outline:hover { background: var(--black); color: var(--white); }
+
+    .btn-gold {
+      font-family: var(--sans);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.4rem;
+      border: 1px solid var(--gold);
+      background: var(--gold);
+      color: var(--white);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-gold:hover { background: transparent; color: var(--gold); }
+
+    /* ── HERO ────────────────────────────────────── */
+    .hero {
+      padding-top: 80px;
+      min-height: 50vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: var(--light);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(184,148,90,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--sans);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: var(--black);
+      max-width: 700px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.4s forwards;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--gray);
+      letter-spacing: 0.05em;
+      margin-top: 1.5rem;
+      max-width: 400px;
+      line-height: 1.8;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.6s forwards;
+    }
+
+    /* ── SEARCH BAR ──────────────────────────────── */
+    .search-section {
+      padding: 3rem 4rem;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 0;
+      max-width: 900px;
+      margin: 0 auto;
+      border: 1px solid var(--border);
+    }
+
+    .search-field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem 1.5rem;
+      border-right: 1px solid var(--border);
+    }
+
+    .search-field label {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.3rem;
+    }
+
+    .search-field select,
+    .search-field input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: var(--black);
+      appearance: none;
+    }
+
+    .search-field select option { color: var(--black); background: var(--white); }
+
+    .search-btn {
+      padding: 0 2.5rem;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      font-family: var(--sans);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .search-btn:hover { background: var(--gold); }
+
+    /* ── FILTERS BAR ─────────────────────────────── */
+    .filters-bar {
+      padding: 1.5rem 4rem;
+      display: flex;
+      gap: 0.8rem;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .filters-label {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
+      white-space: nowrap;
+      margin-right: 0.5rem;
+    }
+
+    .filter-chip {
+      font-family: var(--sans);
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      padding: 0.4rem 1rem;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .filter-chip:hover,
+    .filter-chip.active {
+      border-color: var(--black);
+      color: var(--black);
+      background: var(--light);
+    }
+
+    /* ── MAIN LAYOUT ─────────────────────────────── */
+    main {
+      padding: 3rem 4rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: -0.01em;
+    }
+
+    .section-count {
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: var(--gray);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── PROPERTY GRID ───────────────────────────── */
+    .property-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 2px;
+    }
+
+    .property-card {
+      background: var(--white);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      border: 1px solid var(--border);
+    }
+
+    .property-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
+
+    .card-image {
+      width: 100%;
+      height: 240px;
+      background: var(--light);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .property-card:hover .card-image img { transform: scale(1.04); }
+
+    .card-image-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--light);
+    }
+
+    .card-image-placeholder svg { opacity: 0.2; }
+
+    .card-badge {
+      position: absolute; top: 1rem; left: 1rem;
+      font-size: 0.55rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .card-badge.sale { background: var(--gold); }
+
+    .card-body { padding: 1.5rem; }
+
+    .card-price {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      margin-bottom: 0.4rem;
+    }
+
+    .card-price span {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--gray);
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: var(--black);
+      margin-bottom: 0.3rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-location {
+      font-size: 0.7rem;
+      font-weight: 300;
+      color: var(--gray);
+      letter-spacing: 0.05em;
+      margin-bottom: 1.2rem;
+    }
+
+    .card-specs {
+      display: flex;
+      gap: 1.5rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    .spec {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .spec-value {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--black);
+    }
+
+    .spec-label {
+      font-size: 0.6rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    /* ── LOADING / EMPTY ─────────────────────────── */
+    .loading-state, .empty-state {
+      grid-column: 1 / -1;
+      padding: 6rem 0;
+      text-align: center;
+    }
+
+    .loading-state p, .empty-state p {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: var(--gray);
+      font-style: italic;
+    }
+
+    .empty-state small {
+      display: block;
+      font-family: var(--sans);
+      font-size: 0.7rem;
+      color: var(--gray);
+      letter-spacing: 0.1em;
+      margin-top: 0.8rem;
+    }
+
+    /* ── PAGINATION ──────────────────────────────── */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 4rem;
+      padding-bottom: 4rem;
+    }
+
+    .page-btn {
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .page-btn:hover, .page-btn.active {
+      border-color: var(--black);
+      background: var(--black);
+      color: var(--white);
+    }
+
+    /* ── FOOTER ──────────────────────────────────── */
+    footer {
+      background: var(--black);
+      color: var(--white);
+      padding: 3rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      color: var(--white);
+    }
+
+    .footer-logo span { color: var(--gold); }
+
+    .footer-copy {
+      font-size: 0.65rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: #666;
+    }
+
+    /* ── ANIMATIONS ──────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-appear {
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 768px) {
+      nav { padding: 0 1.5rem; }
+      .nav-links { display: none; }
+      .search-section, main, .filters-bar { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .search-bar { flex-direction: column; }
+      .search-field { border-right: none; border-bottom: 1px solid var(--border); }
+      .search-btn { padding: 1rem; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="index.html" class="nav-logo">YM<span>M</span>O</a>
+  <ul class="nav-links">
+    <li><a href="index.html#about">À propos</a></li>
+    <li><a href="properties.html?transaction=rental">Louer</a></li>
+    <li><a href="properties.html?transaction=sale">Acheter</a></li>
+    <li><a href="index.html#agences">Agences</a></li>
+  </ul>
+  <div class="nav-actions" id="nav-actions">
+    <a href="login.html" class="btn-outline">Connexion</a>
+    <a href="login.html" class="btn-gold">Espace agent</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">Notre sélection</p>
+  <h1>Tous nos <em>biens</em><br/>disponibles</h1>
+  <p class="hero-sub">Découvrez l'ensemble de notre portefeuille immobilier, des appartements aux propriétés d'exception.</p>
+</section>
+
+<!-- SEARCH -->
+<section class="search-section">
+  <div class="search-bar">
+    <div class="search-field">
+      <label>Transaction</label>
+      <select id="filter-transaction">
+        <option value="">Toutes</option>
+        <option value="sale">Acheter</option>
+        <option value="rental">Louer</option>
+      </select>
+    </div>
+    <div class="search-field">
+      <label>Ville</label>
+      <input type="text" id="filter-city" placeholder="Paris, Lyon, Marseille…"/>
+    </div>
+    <div class="search-field">
+      <label>Type de bien</label>
+      <select id="filter-type">
+        <option value="">Tous</option>
+        <option value="apartment">Appartement</option>
+        <option value="house">Maison</option>
+        <option value="office">Bureau</option>
+        <option value="commercial">Local commercial</option>
+        <option value="land">Terrain</option>
+      </select>
+    </div>
+    <div class="search-field" style="border-right:none">
+      <label>Budget max</label>
+      <input type="number" id="filter-price" placeholder="Sans limite"/>
+    </div>
+    <button class="search-btn" onclick="applyFilters()">Rechercher</button>
+  </div>
+</section>
+
+<!-- FILTERS -->
+<div class="filters-bar">
+  <span class="filters-label">Affiner</span>
+  <button class="filter-chip active" onclick="setRooms(0, this)">Tous</button>
+  <button class="filter-chip" onclick="setRooms(1, this)">Studio</button>
+  <button class="filter-chip" onclick="setRooms(2, this)">2 pièces</button>
+  <button class="filter-chip" onclick="setRooms(3, this)">3 pièces</button>
+  <button class="filter-chip" onclick="setRooms(4, this)">4 pièces</button>
+  <button class="filter-chip" onclick="setRooms(5, this)">5 pièces +</button>
+</div>
+
+<!-- MAIN -->
+<main>
+  <div class="section-header">
+    <h2 class="section-title">Biens disponibles</h2>
+    <span class="section-count" id="result-count">Chargement…</span>
+  </div>
+
+  <div class="property-grid" id="property-grid">
+    <div class="loading-state"><p>Chargement des biens…</p></div>
+  </div>
+
+  <div class="pagination" id="pagination"></div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">YM<span>M</span>O</div>
+  <p class="footer-copy">© 2024 Ymmo Groupe Immobilier · Tous droits réservés</p>
+</footer>
+
+<script>
+  const API = 'http://localhost:8081/api/v1';
+  let currentPage = 1;
+  let currentFilters = {};
+  let currentRooms = 0;
+
+  // ── Pré-remplissage depuis les query params (ex: ?transaction=rental) ──
+  (function initFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    const transaction = params.get('transaction');
+    if (transaction) {
+      document.getElementById('filter-transaction').value = transaction;
+      currentFilters.transaction = transaction;
+    }
+  })();
+
+  // ── Formatage ───────────────────────────────────
+  function formatPrice(price, transaction) {
+    const formatted = new Intl.NumberFormat('fr-FR', {
+      style: 'currency', currency: 'EUR', maximumFractionDigits: 0
+    }).format(price);
+    return transaction === 'rental' ? formatted + '<span> / mois</span>' : formatted;
+  }
+
+  function typeLabel(type) {
+    const labels = {
+      apartment: 'Appartement', house: 'Maison',
+      office: 'Bureau', commercial: 'Local', land: 'Terrain'
+    };
+    return labels[type] || type;
+  }
+
+  // ── Carte propriété ─────────────────────────────
+  function renderCard(p, index) {
+    const img = p.images && p.images.length > 0
+            ? `<img src="${API.replace('/api/v1','')}${p.images[0].url}" alt="${p.title}" loading="lazy"/>`
+            : `<div class="card-image-placeholder">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9l4-4 4 4 4-4 4 4"/>
+              <circle cx="8.5" cy="13.5" r="1.5"/>
+            </svg>
+           </div>`;
+
+    const badgeClass = p.transaction === 'sale' ? 'sale' : '';
+    const badgeText  = p.transaction === 'sale' ? 'Vente' : 'Location';
+
+    return `
+        <div class="property-card card-appear" style="animation-delay:${index * 0.07}s"
+             onclick="window.location='property.html?id=${p.id}'">
+          <div class="card-image">
+            ${img}
+            <span class="card-badge ${badgeClass}">${badgeText} · ${typeLabel(p.type)}</span>
+          </div>
+          <div class="card-body">
+            <div class="card-price">${formatPrice(p.price, p.transaction)}</div>
+            <div class="card-title">${p.title}</div>
+            <div class="card-location">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+              </svg>
+              ${p.city} · ${p.zip_code}
+            </div>
+            <div class="card-specs">
+              <div class="spec">
+                <span class="spec-value">${p.surface} m²</span>
+                <span class="spec-label">Surface</span>
+              </div>
+              <div class="spec">
+                <span class="spec-value">${p.rooms}</span>
+                <span class="spec-label">Pièces</span>
+              </div>
+              ${p.bedrooms > 0 ? `
+              <div class="spec">
+                <span class="spec-value">${p.bedrooms}</span>
+                <span class="spec-label">Chambres</span>
+              </div>` : ''}
+              <div class="spec" style="margin-left:auto;text-align:right">
+                <span class="spec-value" style="font-size:0.75rem;color:var(--gray)">${p.view_count}</span>
+                <span class="spec-label">Vues</span>
+              </div>
+            </div>
+          </div>
+        </div>`;
+  }
+
+  // ── Pagination ──────────────────────────────────
+  function renderPagination(total, totalPages) {
+    const el = document.getElementById('pagination');
+    if (totalPages <= 1) { el.innerHTML = ''; return; }
+
+    let html = '';
+    if (currentPage > 1)
+      html += `<button class="page-btn" onclick="loadPage(${currentPage-1})">←</button>`;
+
+    for (let i = 1; i <= totalPages; i++) {
+      html += `<button class="page-btn ${i === currentPage ? 'active' : ''}"
+                   onclick="loadPage(${i})">${i}</button>`;
+    }
+    if (currentPage < totalPages)
+      html += `<button class="page-btn" onclick="loadPage(${currentPage+1})">→</button>`;
+
+    el.innerHTML = html;
+  }
+
+  // ── Chargement des biens ────────────────────────
+  async function loadProperties() {
+    const grid = document.getElementById('property-grid');
+    grid.innerHTML = '<div class="loading-state"><p>Chargement…</p></div>';
+
+    const params = new URLSearchParams({
+      page: currentPage,
+      limit: 9,
+      ...currentFilters
+    });
+
+    if (currentRooms > 0) params.set('rooms', currentRooms);
+
+    try {
+      const res = await fetch(`${API}/properties?${params}`);
+      const data = await res.json();
+
+      document.getElementById('result-count').textContent =
+              `${data.total || 0} bien${(data.total || 0) > 1 ? 's' : ''} trouvé${(data.total || 0) > 1 ? 's' : ''}`;
+
+      if (!data.data || data.data.length === 0) {
+        grid.innerHTML = `
+            <div class="empty-state">
+              <p>Aucun bien disponible</p>
+              <small>Modifiez vos critères de recherche</small>
+            </div>`;
+        document.getElementById('pagination').innerHTML = '';
+        return;
+      }
+
+      grid.innerHTML = data.data.map((p, i) => renderCard(p, i)).join('');
+      renderPagination(data.total, data.total_pages);
+
+    } catch (err) {
+      grid.innerHTML = `
+          <div class="empty-state">
+            <p>Erreur de connexion</p>
+            <small>Vérifiez que le serveur est démarré sur le port 8081</small>
+          </div>`;
+    }
+  }
+
+  // ── Filtres ─────────────────────────────────────
+  function applyFilters() {
+    currentPage = 1;
+    currentFilters = {};
+
+    const city        = document.getElementById('filter-city').value.trim();
+    const type        = document.getElementById('filter-type').value;
+    const transaction = document.getElementById('filter-transaction').value;
+    const maxPrice    = document.getElementById('filter-price').value;
+
+    if (city)        currentFilters.city        = city;
+    if (type)        currentFilters.type        = type;
+    if (transaction) currentFilters.transaction = transaction;
+    if (maxPrice)    currentFilters.max_price   = maxPrice;
+
+    loadProperties();
+  }
+
+  function setRooms(rooms, btn) {
+    currentRooms = rooms;
+    currentPage  = 1;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    loadProperties();
+  }
+
+  function loadPage(page) {
+    currentPage = page;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    loadProperties();
+  }
+
+  // ── Navigation dynamique selon l'état de connexion ──
+  function getUser() {
+    const u = sessionStorage.getItem('ymmo_user');
+    return u ? JSON.parse(u) : null;
+  }
+
+  function logout() {
+    sessionStorage.removeItem('ymmo_token');
+    sessionStorage.removeItem('ymmo_user');
+    window.location.reload();
+  }
+
+  function renderNav() {
+    const user = getUser();
+    const actions = document.getElementById('nav-actions');
+    if (!user) return; // garde "Connexion" / "Espace agent"
+
+    let html = '<a href="messages.html" class="btn-outline">Mes messages</a>';
+    if (user.role === 'agent' || user.role === 'admin') {
+      html += '<a href="dashboard.html" class="btn-gold">Dashboard</a>';
+    }
+    html += '<button class="btn-outline" onclick="logout()" style="cursor:pointer;border:1px solid var(--black)">Déconnexion</button>';
+    actions.innerHTML = html;
+  }
+
+  // ── Init ─────────────────────────────────────────
+  renderNav();
+  loadProperties();
+</script>
+</body>
+</html>

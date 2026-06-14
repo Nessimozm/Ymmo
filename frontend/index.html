@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Ymmo — Groupe Immobilier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --black:  #0a0a0a;
+            --white:  #fafaf8;
+            --gold:   #b8945a;
+            --gold-lt:#d4af7a;
+            --gray:   #6b6b6b;
+            --light:  #f0ede8;
+            --border: #e0dbd2;
+            --serif:  'Cormorant Garamond', Georgia, serif;
+            --sans:   'Raleway', sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--white);
+            color: var(--black);
+            font-family: var(--sans);
+            font-weight: 300;
+        }
+
+        /* ── NAVBAR ───────────────────────────────────── */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 4rem; height: 80px;
+            background: rgba(10,10,10,0.92);
+            backdrop-filter: blur(12px);
+        }
+
+        .nav-logo {
+            font-family: var(--serif);
+            font-size: 1.8rem; font-weight: 300;
+            letter-spacing: 0.15em; color: var(--white);
+            text-decoration: none;
+        }
+        .nav-logo span { color: var(--gold); }
+
+        .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+        .nav-links a {
+            font-size: 0.7rem; font-weight: 500;
+            letter-spacing: 0.18em; text-transform: uppercase;
+            color: rgba(255,255,255,0.6); text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--white); }
+
+        .nav-actions { display: flex; gap: 1rem; align-items: center; }
+
+        .btn-nav {
+            font-family: var(--sans); font-size: 0.65rem;
+            font-weight: 500; letter-spacing: 0.18em;
+            text-transform: uppercase; padding: 0.6rem 1.4rem;
+            text-decoration: none; transition: all 0.2s; cursor: pointer; border: none;
+        }
+        .btn-outline-w { border: 1px solid rgba(255,255,255,0.4); color: var(--white); background: transparent; }
+        .btn-outline-w:hover { border-color: var(--white); background: var(--white); color: var(--black); }
+        .btn-gold { border: 1px solid var(--gold); background: var(--gold); color: var(--white); }
+        .btn-gold:hover { background: transparent; color: var(--gold); }
+
+        /* ── HERO ─────────────────────────────────────── */
+        .hero {
+            min-height: 100vh;
+            background: var(--black);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: flex-start;
+            padding: 0 4rem;
+            position: relative; overflow: hidden;
+        }
+
+        .hero-bg-text {
+            position: absolute; right: -2rem; top: 50%;
+            transform: translateY(-50%);
+            font-family: var(--serif);
+            font-size: clamp(12rem, 22vw, 22rem);
+            font-weight: 300; line-height: 1;
+            color: rgba(255,255,255,0.03);
+            letter-spacing: -0.05em;
+            pointer-events: none; user-select: none;
+        }
+
+        .hero-line {
+            width: 60px; height: 1px;
+            background: var(--gold);
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.2s forwards;
+        }
+
+        .hero-eyebrow {
+            font-size: 0.65rem; font-weight: 500;
+            letter-spacing: 0.35em; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 1.5rem;
+            opacity: 0; animation: fadeUp 0.8s ease 0.3s forwards;
+        }
+
+        .hero h1 {
+            font-family: var(--serif);
+            font-size: clamp(3.5rem, 7vw, 7rem);
+            font-weight: 300; line-height: 1.05;
+            letter-spacing: -0.02em; color: var(--white);
+            max-width: 750px;
+            opacity: 0; animation: fadeUp 0.8s ease 0.5s forwards;
+        }
+
+        .hero h1 em { font-style: italic; color: var(--gold); }
+
+        .hero-desc {
+            font-size: 0.85rem; line-height: 1.9;
+            color: rgba(255,255,255,0.5);
+            max-width: 420px; margin-top: 2rem;
+            opacity: 0; animation: fadeUp 0.8s ease 0.7s forwards;
+        }
+
+        .hero-cta {
+            display: flex; gap: 1rem; margin-top: 3rem;
+            opacity: 0; animation: fadeUp 0.8s ease 0.9s forwards;
+        }
+
+        .btn-primary {
+            font-family: var(--sans); font-size: 0.7rem;
+            font-weight: 500; letter-spacing: 0.2em;
+            text-transform: uppercase; padding: 1rem 2.5rem;
+            border: 1px solid var(--gold); background: var(--gold);
+            color: var(--white); text-decoration: none;
+            transition: all 0.25s; cursor: pointer;
+        }
+        .btn-primary:hover { background: transparent; color: var(--gold); }
+
+        .btn-secondary {
+            font-family: var(--sans); font-size: 0.7rem;
+            font-weight: 500; letter-spacing: 0.2em;
+            text-transform: uppercase; padding: 1rem 2.5rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: transparent; color: var(--white);
+            text-decoration: none; transition: all 0.25s;
+        }
+        .btn-secondary:hover { border-color: var(--white); }
+
+        .hero-scroll {
+            position: absolute; bottom: 2.5rem; left: 50%;
+            transform: translateX(-50%);
+            display: flex; flex-direction: column;
+            align-items: center; gap: 0.5rem;
+            opacity: 0; animation: fadeUp 0.8s ease 1.2s forwards;
+        }
+
+        .hero-scroll span {
+            font-size: 0.55rem; letter-spacing: 0.25em;
+            text-transform: uppercase; color: rgba(255,255,255,0.3);
+        }
+
+        .scroll-line {
+            width: 1px; height: 40px;
+            background: linear-gradient(to bottom, var(--gold), transparent);
+            animation: scrollPulse 2s ease infinite;
+        }
+
+        /* ── STATS ────────────────────────────────────── */
+        .stats-section {
+            background: var(--light);
+            padding: 5rem 4rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+        }
+
+        .stat-card {
+            padding: 2rem 3rem;
+            border-right: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .stat-card:last-child { border-right: none; }
+
+        .stat-number {
+            font-family: var(--serif);
+            font-size: 3.5rem; font-weight: 300;
+            color: var(--black); line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number span { color: var(--gold); }
+
+        .stat-label {
+            font-size: 0.65rem; font-weight: 500;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--gray);
+        }
+
+        /* ── SECTION GÉNÉRIQUE ───────────────────────── */
+        .section { padding: 8rem 4rem; }
+        .section-dark { background: var(--black); }
+        .section-light { background: var(--white); }
+        .section-cream { background: var(--light); }
+
+        .section-tag {
+            font-size: 0.6rem; font-weight: 500;
+            letter-spacing: 0.35em; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: var(--serif);
+            font-size: clamp(2.5rem, 4vw, 4rem);
+            font-weight: 300; line-height: 1.1;
+            color: var(--black); max-width: 550px;
+        }
+
+        .section-title-white { color: var(--white); }
+
+        .section-title em { font-style: italic; color: var(--gold); }
+
+        /* ── QUI SOMMES-NOUS ─────────────────────────── */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8rem;
+            align-items: center;
+            margin-top: 4rem;
+        }
+
+        .about-text p {
+            font-size: 0.85rem; line-height: 1.9;
+            color: var(--gray); margin-bottom: 1.5rem;
+        }
+
+        .about-text p strong { color: var(--black); font-weight: 500; }
+
+        .about-visual {
+            position: relative;
+        }
+
+        .about-card-main {
+            background: var(--black);
+            padding: 3rem;
+            position: relative;
+        }
+
+        .about-card-main::before {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            width: 4px; height: 100%;
+            background: var(--gold);
+        }
+
+        .about-card-quote {
+            font-family: var(--serif);
+            font-size: 1.6rem; font-weight: 300;
+            line-height: 1.4; color: var(--white);
+            font-style: italic;
+        }
+
+        .about-card-author {
+            margin-top: 1.5rem;
+            font-size: 0.65rem; font-weight: 500;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        .about-card-accent {
+            position: absolute; bottom: -1.5rem; right: -1.5rem;
+            background: var(--gold);
+            width: 80px; height: 80px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--serif);
+            font-size: 2rem; color: var(--white);
+        }
+
+        /* ── SERVICES ────────────────────────────────── */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            margin-top: 4rem;
+        }
+
+        .service-card {
+            background: rgba(255,255,255,0.04);
+            padding: 3rem 2.5rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: background 0.3s;
+            position: relative; overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover { background: rgba(255,255,255,0.07); }
+        .service-card:hover::before { transform: scaleX(1); }
+
+        .service-icon {
+            font-size: 2rem; margin-bottom: 1.5rem;
+        }
+
+        .service-title {
+            font-family: var(--serif);
+            font-size: 1.4rem; font-weight: 400;
+            color: var(--white); margin-bottom: 1rem;
+        }
+
+        .service-desc {
+            font-size: 0.78rem; line-height: 1.8;
+            color: rgba(255,255,255,0.45);
+        }
+
+        /* ── AGENCES ─────────────────────────────────── */
+        .agences-intro {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6rem;
+            align-items: end;
+            margin-bottom: 4rem;
+        }
+
+        .agences-desc {
+            font-size: 0.85rem; line-height: 1.9;
+            color: var(--gray); margin-top: 1.5rem;
+        }
+
+        .agences-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .agence-item {
+            background: var(--white);
+            padding: 1.5rem;
+            transition: background 0.2s;
+        }
+
+        .agence-item:hover { background: var(--light); }
+
+        .agence-city {
+            font-family: var(--serif);
+            font-size: 1.1rem; font-weight: 400;
+            color: var(--black); margin-bottom: 0.3rem;
+        }
+
+        .agence-region {
+            font-size: 0.65rem; font-weight: 400;
+            letter-spacing: 0.1em; color: var(--gray);
+        }
+
+        .agence-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--gold); margin-bottom: 0.8rem;
+        }
+
+        /* ── VALEURS ─────────────────────────────────── */
+        .valeurs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .valeur-item {
+            display: flex; gap: 1.5rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .valeur-number {
+            font-family: var(--serif);
+            font-size: 3rem; font-weight: 300;
+            color: var(--gold); line-height: 1;
+            flex-shrink: 0; min-width: 3rem;
+        }
+
+        .valeur-title {
+            font-family: var(--serif);
+            font-size: 1.3rem; font-weight: 400;
+            color: var(--black); margin-bottom: 0.8rem;
+        }
+
+        .valeur-desc {
+            font-size: 0.78rem; line-height: 1.8; color: var(--gray);
+        }
+
+        /* ── CTA FINAL ───────────────────────────────── */
+        .cta-section {
+            background: var(--black);
+            padding: 8rem 4rem;
+            text-align: center;
+            position: relative; overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at center, rgba(184,148,90,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta-title {
+            font-family: var(--serif);
+            font-size: clamp(3rem, 5vw, 5rem);
+            font-weight: 300; color: var(--white);
+            line-height: 1.1; margin-bottom: 2rem;
+            position: relative; z-index: 1;
+        }
+
+        .cta-title em { font-style: italic; color: var(--gold); }
+
+        .cta-sub {
+            font-size: 0.8rem; color: rgba(255,255,255,0.4);
+            letter-spacing: 0.05em; margin-bottom: 3rem;
+            position: relative; z-index: 1;
+        }
+
+        .cta-buttons {
+            display: flex; gap: 1rem;
+            justify-content: center;
+            position: relative; z-index: 1;
+        }
+
+        /* ── FOOTER ──────────────────────────────────── */
+        footer {
+            background: #050505;
+            padding: 4rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .footer-brand {}
+
+        .footer-logo {
+            font-family: var(--serif);
+            font-size: 1.8rem; font-weight: 300;
+            letter-spacing: 0.15em; color: var(--white);
+            margin-bottom: 1rem; display: block;
+        }
+
+        .footer-logo span { color: var(--gold); }
+
+        .footer-tagline {
+            font-size: 0.75rem; line-height: 1.8;
+            color: rgba(255,255,255,0.3); max-width: 220px;
+        }
+
+        .footer-col h4 {
+            font-size: 0.6rem; font-weight: 500;
+            letter-spacing: 0.25em; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 1.5rem;
+        }
+
+        .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+
+        .footer-col a {
+            font-size: 0.75rem; color: rgba(255,255,255,0.4);
+            text-decoration: none; transition: color 0.2s;
+        }
+
+        .footer-col a:hover { color: var(--white); }
+
+        .footer-bottom {
+            background: #050505;
+            padding: 1.5rem 4rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .footer-copy {
+            font-size: 0.65rem; color: rgba(255,255,255,0.2);
+            letter-spacing: 0.1em;
+        }
+
+        /* ── ANIMATIONS ──────────────────────────────── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.3; transform: scaleY(1); }
+            50%       { opacity: 1;   transform: scaleY(1.2); }
+        }
+
+        /* ── RESPONSIVE ──────────────────────────────── */
+        @media (max-width: 1024px) {
+            .about-grid, .agences-intro { grid-template-columns: 1fr; gap: 3rem; }
+            .services-grid { grid-template-columns: 1fr 1fr; }
+            .agences-grid { grid-template-columns: repeat(3, 1fr); }
+            footer { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 0 1.5rem; }
+            .nav-links { display: none; }
+            .hero, .section, .stats-section, .cta-section { padding-left: 1.5rem; padding-right: 1.5rem; }
+            .stats-section { grid-template-columns: 1fr 1fr; }
+            .services-grid, .valeurs-grid { grid-template-columns: 1fr; }
+            .agences-grid { grid-template-columns: 1fr 1fr; }
+            footer, .footer-bottom { padding-left: 1.5rem; padding-right: 1.5rem; }
+            footer { grid-template-columns: 1fr; gap: 2rem; }
+            .hero-cta { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <a href="index.html" class="nav-logo">YM<span>M</span>O</a>
+    <ul class="nav-links">
+        <li><a href="#about">À propos</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#agences">Agences</a></li>
+        <li><a href="properties.html">Nos biens</a></li>
+    </ul>
+    <div class="nav-actions" id="nav-actions">
+        <a href="login.html" class="btn-nav btn-outline-w">Connexion</a>
+        <a href="properties.html" class="btn-nav btn-gold">Rechercher</a>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-bg-text">YMMO</div>
+    <div class="hero-line"></div>
+    <p class="hero-eyebrow">Groupe Immobilier · Fondé en 2024</p>
+    <h1>L'immobilier<br/>réinventé pour<br/><em>l'excellence</em></h1>
+    <p class="hero-desc">
+        Ymmo accompagne particuliers et professionnels dans leurs projets immobiliers
+        à travers 12 agences en France, avec une expertise inégalée du marché résidentiel et professionnel.
+    </p>
+    <div class="hero-cta">
+        <a href="properties.html" class="btn-primary">Découvrir nos biens</a>
+        <a href="#about" class="btn-secondary">En savoir plus</a>
+    </div>
+    <div class="hero-scroll">
+        <div class="scroll-line"></div>
+        <span>Découvrir</span>
+    </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-section">
+    <div class="stat-card">
+        <div class="stat-number">12<span>+</span></div>
+        <div class="stat-label">Agences en France</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">500<span>+</span></div>
+        <div class="stat-label">Biens disponibles</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">98<span>%</span></div>
+        <div class="stat-label">Clients satisfaits</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">15<span>ans</span></div>
+        <div class="stat-label">D'expérience</div>
+    </div>
+</div>
+
+<!-- À PROPOS -->
+<section class="section section-light" id="about">
+    <p class="section-tag">À propos</p>
+    <h2 class="section-title">Un groupe fondé sur la <em>confiance</em></h2>
+    <div class="about-grid">
+        <div class="about-text">
+            <p>
+                Ymmo est un groupe immobilier national dont le siège social est établi à
+                <strong>Aix-en-Provence</strong>. Depuis notre fondation, nous avons bâti
+                notre réputation sur une approche humaine et personnalisée de chaque transaction.
+            </p>
+            <p>
+                Notre réseau de <strong>12 agences</strong> couvre les principales métropoles
+                françaises, permettant à nos clients de bénéficier d'une expertise locale
+                appuyée par des outils digitaux de pointe.
+            </p>
+            <p>
+                En 2024, nous franchissons une nouvelle étape avec le déploiement de notre
+                <strong>plateforme numérique</strong> — pensée pour simplifier chaque étape
+                de votre projet, de la recherche à la signature.
+            </p>
+            <a href="properties.html" class="btn-primary" style="display:inline-block;margin-top:1.5rem">
+                Voir nos biens
+            </a>
+        </div>
+        <div class="about-visual">
+            <div class="about-card-main">
+                <p class="about-card-quote">
+                    "L'immobilier n'est pas qu'une transaction. C'est le début d'une nouvelle vie."
+                </p>
+                <p class="about-card-author">Direction Ymmo · Aix-en-Provence</p>
+                <div class="about-card-accent">Y</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section section-dark" id="services">
+    <p class="section-tag">Nos services</p>
+    <h2 class="section-title section-title-white">Ce que nous <em>faisons</em></h2>
+    <div class="services-grid">
+        <div class="service-card">
+            <div class="service-icon">🏡</div>
+            <h3 class="service-title">Achat immobilier</h3>
+            <p class="service-desc">
+                Nous vous accompagnons dans la recherche et l'acquisition de votre bien idéal.
+                Appartements, maisons, terrains — notre équipe est à vos côtés à chaque étape.
+            </p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">📋</div>
+            <h3 class="service-title">Vente de biens</h3>
+            <p class="service-desc">
+                Confiez la vente de votre bien à nos experts. Estimation gratuite, diffusion multicanale
+                et suivi personnalisé jusqu'à la signature de l'acte authentique.
+            </p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">🔑</div>
+            <h3 class="service-title">Location</h3>
+            <p class="service-desc">
+                Propriétaires ou locataires, nous gérons votre location de A à Z — rédaction des
+                annonces, visites, sélection des dossiers et gestion locative.
+            </p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">🏢</div>
+            <h3 class="service-title">Immobilier professionnel</h3>
+            <p class="service-desc">
+                Bureaux, locaux commerciaux, entrepôts — notre division professionnelle accompagne
+                les entreprises dans leurs besoins immobiliers sur tout le territoire.
+            </p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">📊</div>
+            <h3 class="service-title">Analyse de marché</h3>
+            <p class="service-desc">
+                Accédez à des données en temps réel sur les tendances du marché, les zones à fort
+                potentiel et les prévisions de prix grâce à notre outil d'analyse IA.
+            </p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">💬</div>
+            <h3 class="service-title">Conseil patrimonial</h3>
+            <p class="service-desc">
+                Nos conseillers vous guident dans vos stratégies d'investissement immobilier
+                pour optimiser votre patrimoine sur le long terme.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- AGENCES -->
+<section class="section section-cream" id="agences">
+    <div class="agences-intro">
+        <div>
+            <p class="section-tag">Notre réseau</p>
+            <h2 class="section-title">12 agences,<br/>une seule <em>vision</em></h2>
+            <p class="agences-desc">
+                De Paris à Marseille, notre réseau d'agences couvre l'ensemble du territoire français.
+                Chaque agence est staffée d'experts locaux qui connaissent parfaitement leur marché.
+            </p>
+        </div>
+        <div>
+            <p style="font-size:0.78rem;line-height:1.9;color:var(--gray)">
+                Que vous soyez à la recherche d'un pied-à-terre dans la capitale ou d'une villa sur la Côte d'Azur,
+                l'une de nos agences est à proximité pour vous accompagner dans votre projet.
+            </p>
+            <a href="properties.html" class="btn-primary" style="display:inline-block;margin-top:2rem">
+                Trouver une agence
+            </a>
+        </div>
+    </div>
+
+    <div class="agences-grid">
+        <div class="agence-item">
+            <div class="agence-dot"></div>
+            <div class="agence-city">Aix-en-Provence</div>
+            <div class="agence-region">Siège social · PACA</div>
+        </div>
+        <div class="agence-item">
+            <div class="agence-dot"></div>
+            <div class="agence-city">Paris</div>
+            <div class="agence-region">Île-de-France</div>
+        </div>
+        <div class="agence-item">
+            <div class="agence-dot"></div>
+            <div class="agence-city">Lyon</div>
+            <div class="agence-region">Auvergne-Rhône-Alpes</div>
+        </div>
+        <div class="agence-item">
+            <div class="agence-dot"></div>
+            <div class="agence-city">Marseille</div>
+            <div class="agence-region">PACA</div>
+        </div>
+        <div class="agence-item">
+            <div class="agence-dot"></div>
+            <div class="agence-city">Bordeaux</div>
+            <div class="agence-region">Nouvelle-Aquitaine</div>
+        </div>
+        <div class="agence-item">
+            <div class="agence-dot"></div>
+            <div class="agence-city">Toulouse</div>
+            <div class="agence-region">Occitanie</div>
+        </div>
+        <div class="agence-item">
+            <div class="agence-dot"></div>
+            <div class="agence-city">Nice</div>
+            <div class="agence-region">PACA</div>
+        </div>
+        <div class="agence-item">
+            <div class="agence-dot"></div>
+            <div class="agence-city">Nantes</div>
+            <div class="agence-region">Pays de la Loire</div>
+        </div>
+        <div class="agence-item">
+            <div class="agence-dot"></div>
+            <div class="agence-city">Strasbourg</div>
+            <div class="agence-region">Grand Est</div>
+        </div>
+        <div class="agence-item">
+            <div class="agence-dot"></div>
+            <div class="agence-city">Montpellier</div>
+            <div class="agence-region">Occitanie</div>
+        </div>
+        <div class="agence-item">
+            <div class="agence-dot"></div>
+            <div class="agence-city">Rennes</div>
+            <div class="agence-region">Bretagne</div>
+        </div>
+        <div class="agence-item">
+            <div class="agence-dot"></div>
+            <div class="agence-city">Lille</div>
+            <div class="agence-region">Hauts-de-France</div>
+        </div>
+    </div>
+</section>
+
+<!-- VALEURS -->
+<section class="section section-light">
+    <p class="section-tag">Nos valeurs</p>
+    <h2 class="section-title">Ce qui nous <em>distingue</em></h2>
+    <div class="valeurs-grid">
+        <div class="valeur-item">
+            <div class="valeur-number">01</div>
+            <div>
+                <h3 class="valeur-title">Transparence</h3>
+                <p class="valeur-desc">
+                    Chaque prix, chaque frais, chaque étape est clairement expliqué. Nous croyons
+                    qu'une relation durable se bâtit sur une totale honnêteté.
+                </p>
+            </div>
+        </div>
+        <div class="valeur-item">
+            <div class="valeur-number">02</div>
+            <div>
+                <h3 class="valeur-title">Excellence</h3>
+                <p class="valeur-desc">
+                    Nous ne proposons que des biens soigneusement sélectionnés et des services
+                    irréprochables. La qualité est notre signature.
+                </p>
+            </div>
+        </div>
+        <div class="valeur-item">
+            <div class="valeur-number">03</div>
+            <div>
+                <h3 class="valeur-title">Innovation</h3>
+                <p class="valeur-desc">
+                    Notre plateforme numérique et nos outils d'analyse IA placent Ymmo à
+                    l'avant-garde de l'immobilier digital en France.
+                </p>
+            </div>
+        </div>
+        <div class="valeur-item">
+            <div class="valeur-number">04</div>
+            <div>
+                <h3 class="valeur-title">Proximité</h3>
+                <p class="valeur-desc">
+                    Malgré notre envergure nationale, chaque client est suivi par un conseiller
+                    dédié qui connaît son marché local sur le bout des doigts.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <h2 class="cta-title">Prêt à trouver<br/>votre <em>bien idéal ?</em></h2>
+    <p class="cta-sub">Des milliers de biens vous attendent sur notre plateforme</p>
+    <div class="cta-buttons">
+        <a href="properties.html" class="btn-primary">Rechercher un bien</a>
+        <a href="login.html" class="btn-secondary">Créer un compte</a>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-brand">
+        <span class="footer-logo">YM<span>M</span>O</span>
+        <p class="footer-tagline">
+            Groupe immobilier national spécialisé dans l'achat, la vente et la location
+            de biens résidentiels et professionnels.
+        </p>
+    </div>
+    <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+            <li><a href="#about">À propos</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#agences">Agences</a></li>
+            <li><a href="properties.html">Nos biens</a></li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>Compte</h4>
+        <ul>
+            <li><a href="login.html">Connexion</a></li>
+            <li><a href="login.html">Créer un compte</a></li>
+            <li><a href="dashboard.html">Espace agent</a></li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+            <li><a href="#">contact@ymmo.fr</a></li>
+            <li><a href="#">+33 4 42 00 00 00</a></li>
+            <li><a href="#">Aix-en-Provence</a></li>
+        </ul>
+    </div>
+</footer>
+<div class="footer-bottom">
+    <span class="footer-copy">© 2024 Ymmo Groupe Immobilier · Tous droits réservés</span>
+    <span class="footer-copy">Aix-en-Provence · France</span>
+</div>
+
+<script>
+    // ── Navigation dynamique selon l'état de connexion ──
+    function getUser() {
+        const u = sessionStorage.getItem('ymmo_user');
+        return u ? JSON.parse(u) : null;
+    }
+
+    function logout() {
+        sessionStorage.removeItem('ymmo_token');
+        sessionStorage.removeItem('ymmo_user');
+        window.location.reload();
+    }
+
+    function renderNav() {
+        const user = getUser();
+        const actions = document.getElementById('nav-actions');
+        if (!user) return; // garde "Connexion" / "Rechercher"
+
+        let html = '<a href="messages.html" class="btn-nav btn-outline-w">Mes messages</a>';
+        if (user.role === 'agent' || user.role === 'admin') {
+            html += '<a href="dashboard.html" class="btn-nav btn-gold">Dashboard</a>';
+        } else {
+            html += '<a href="properties.html" class="btn-nav btn-gold">Rechercher</a>';
+        }
+        html += '<button class="btn-nav btn-outline-w" onclick="logout()" style="cursor:pointer">Déconnexion</button>';
+        actions.innerHTML = html;
+    }
+
+    renderNav();
+</script>
+</body>
+</html>

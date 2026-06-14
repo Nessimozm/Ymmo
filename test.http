@@ -1,0 +1,26 @@
+### 1. Inscription
+POST http://localhost:8081/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "first_name": "nessim",
+  "last_name": "Goat",
+  "email": "nessim@ymmo.fr",
+  "password": "password123"
+}
+
+### 2. Connexion
+POST http://localhost:8081/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "nessim@ymmo.fr",
+  "password": "password123"
+}
+
+### 3. Liste des biens (public)
+GET http://localhost:8081/api/v1/properties
+
+### 4. Mon profil (remplace TOKEN par le jwt reçu au login)
+GET http://localhost:8081/api/v1/auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJyb2xlIjoiY2xpZW50Iiwic3ViIjoiMyIsImV4cCI6MTc4MDEyNTgyMSwiaWF0IjoxNzgwMDM5NDIxfQ.fiW5ivYSWhubpC4_XUrFM1I0ntd4xAX5NM0c5dQZ86c

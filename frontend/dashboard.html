@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ymmo — Espace Agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:  #0a0a0a;
+      --white:  #fafaf8;
+      --gold:   #b8945a;
+      --gold-lt:#d4af7a;
+      --gray:   #6b6b6b;
+      --light:  #f0ede8;
+      --border: #e0dbd2;
+      --error:  #c0392b;
+      --success:#27ae60;
+      --warn:   #d68910;
+      --serif:  'Cormorant Garamond', Georgia, serif;
+      --sans:   'Raleway', sans-serif;
+    }
+
+    body { background: var(--light); color: var(--black); font-family: var(--sans); font-weight: 300; min-height: 100vh; }
+
+    /* ── LAYOUT ───────────────────────────────────── */
+    .layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+    /* ── SIDEBAR ──────────────────────────────────── */
+    .sidebar {
+      background: var(--black);
+      padding: 2rem 0;
+      display: flex; flex-direction: column;
+      position: sticky; top: 0; height: 100vh;
+    }
+
+    .sidebar-logo {
+      font-family: var(--serif); font-size: 1.6rem; font-weight: 300;
+      letter-spacing: 0.15em; color: var(--white);
+      padding: 0 2rem 2rem; text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 1.5rem;
+    }
+    .sidebar-logo span { color: var(--gold); }
+
+    .sidebar-section {
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.25em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3);
+      padding: 0 2rem; margin-bottom: 0.8rem;
+    }
+
+    .sidebar-nav { display: flex; flex-direction: column; gap: 0.2rem; margin-bottom: 2rem; }
+
+    .sidebar-link {
+      display: flex; align-items: center; gap: 0.9rem;
+      padding: 0.8rem 2rem;
+      font-size: 0.78rem; font-weight: 400;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none; cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .sidebar-link:hover { color: var(--white); background: rgba(255,255,255,0.03); }
+
+    .sidebar-link.active {
+      color: var(--white);
+      border-left-color: var(--gold);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .sidebar-link svg { flex-shrink: 0; opacity: 0.7; }
+    .sidebar-link.active svg { opacity: 1; color: var(--gold); }
+
+    .sidebar-badge {
+      margin-left: auto;
+      background: var(--gold); color: var(--white);
+      font-size: 0.6rem; font-weight: 600;
+      padding: 0.1rem 0.45rem; border-radius: 10px;
+      min-width: 18px; text-align: center;
+    }
+
+    .sidebar-footer {
+      margin-top: auto; padding: 1.5rem 2rem 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar-user {
+      display: flex; align-items: center; gap: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(184,148,90,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-size: 1rem; color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .sidebar-username { font-size: 0.75rem; color: var(--white); font-weight: 500; }
+    .sidebar-userrole { font-size: 0.6rem; color: rgba(255,255,255,0.35); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .sidebar-logout {
+      display: flex; align-items: center; gap: 0.6rem;
+      width: 100%; padding: 0.7rem;
+      font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      background: transparent; border: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer; transition: all 0.2s; padding-top: 0.7rem; padding-bottom: 0.7rem; justify-content: center;
+    }
+    .sidebar-logout:hover { color: var(--white); border-color: rgba(255,255,255,0.3); }
+
+    /* ── MAIN ─────────────────────────────────────── */
+    .main { padding: 2.5rem 3rem; max-width: 1400px; }
+
+    .page-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 2.5rem;
+    }
+
+    .page-eyebrow {
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem;
+    }
+
+    .page-title {
+      font-family: var(--serif); font-size: 2.2rem; font-weight: 300;
+      color: var(--black);
+    }
+
+    .btn-primary {
+      font-family: var(--sans); font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.85rem 1.8rem; border: 1px solid var(--black);
+      background: var(--black); color: var(--white);
+      cursor: pointer; text-decoration: none; transition: all 0.25s;
+      display: inline-flex; align-items: center; gap: 0.6rem;
+    }
+    .btn-primary:hover { background: var(--gold); border-color: var(--gold); }
+
+    .btn-outline {
+      font-family: var(--sans); font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.85rem 1.8rem; border: 1px solid var(--border);
+      background: var(--white); color: var(--black);
+      cursor: pointer; text-decoration: none; transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--black); }
+
+    /* ── KPI CARDS ────────────────────────────────── */
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1rem; margin-bottom: 2.5rem;
+    }
+
+    .kpi-card {
+      background: var(--white); border: 1px solid var(--border);
+      padding: 1.5rem; position: relative; overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 3px; height: 100%; background: var(--gold);
+    }
+
+    .kpi-label {
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gray); margin-bottom: 0.8rem;
+    }
+
+    .kpi-value {
+      font-family: var(--serif); font-size: 2.4rem; font-weight: 300;
+      color: var(--black); line-height: 1;
+    }
+
+    .kpi-sub { font-size: 0.7rem; color: var(--gray); margin-top: 0.5rem; }
+    .kpi-sub.positive { color: var(--success); }
+    .kpi-sub.alert { color: var(--warn); }
+
+    /* ── TABLE ────────────────────────────────────── */
+    .panel {
+      background: var(--white); border: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .panel-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.5rem 1.8rem; border-bottom: 1px solid var(--border);
+    }
+
+    .panel-title {
+      font-family: var(--serif); font-size: 1.3rem; font-weight: 400;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    th {
+      text-align: left; padding: 0.8rem 1.8rem;
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gold);
+      border-bottom: 1px solid var(--border);
+      background: var(--light);
+    }
+
+    td {
+      padding: 1rem 1.8rem; font-size: 0.8rem;
+      border-bottom: 1px solid var(--border); color: var(--black);
+    }
+
+    tbody tr { transition: background 0.15s; }
+    tbody tr:hover { background: var(--light); }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .cell-title { font-weight: 400; }
+    .cell-sub { font-size: 0.68rem; color: var(--gray); margin-top: 0.2rem; }
+
+    .badge {
+      font-size: 0.58rem; font-weight: 500; letter-spacing: 0.15em;
+      text-transform: uppercase; padding: 0.3rem 0.7rem; display: inline-block;
+    }
+    .badge-available { background: #edfaf2; color: var(--success); border: 1px solid #b7eacb; }
+    .badge-pending   { background: #fef9e7; color: var(--warn);    border: 1px solid #fdeaa7; }
+    .badge-sold      { background: #fdf0ef; color: var(--error);   border: 1px solid #f5b7b1; }
+    .badge-rented    { background: #eef2fa; color: #2e5fa3;        border: 1px solid #c9d9f0; }
+
+    .actions { display: flex; gap: 0.5rem; }
+
+    .icon-btn {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--gray); cursor: pointer; transition: all 0.2s;
+    }
+    .icon-btn:hover { border-color: var(--black); color: var(--black); }
+    .icon-btn.danger:hover { border-color: var(--error); color: var(--error); }
+
+    .empty-row td {
+      text-align: center; padding: 3rem;
+      font-family: var(--serif); font-size: 1.2rem;
+      color: var(--gray); font-style: italic;
+    }
+
+    /* ── MODAL ────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1000; padding: 2rem;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      background: var(--white); width: 100%; max-width: 600px;
+      max-height: 90vh; overflow-y: auto;
+      border-top: 3px solid var(--gold);
+    }
+
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.5rem 2rem; border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 400; }
+
+    .modal-close {
+      width: 32px; height: 32px; border: none; background: transparent;
+      cursor: pointer; color: var(--gray); font-size: 1.2rem;
+    }
+    .modal-close:hover { color: var(--black); }
+
+    .modal-body { padding: 2rem; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .field { display: flex; flex-direction: column; gap: 0.4rem; }
+
+    .field label {
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gold);
+    }
+
+    .field input, .field select, .field textarea {
+      font-family: var(--sans); font-size: 0.85rem; font-weight: 300;
+      padding: 0.7rem 0; border: none; border-bottom: 1px solid var(--border);
+      background: transparent; color: var(--black); outline: none;
+      transition: border-color 0.2s; resize: none;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { border-bottom-color: var(--black); }
+    .field input::placeholder, .field textarea::placeholder { color: #ccc; }
+
+    /* ── IMAGE UPLOAD ─────────────────────────────── */
+    .field input[type="file"] {
+      font-size: 0.75rem; padding: 0.6rem 0;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .image-preview {
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
+      margin-top: 0.8rem;
+    }
+
+    .image-preview-item {
+      position: relative; width: 80px; height: 80px;
+      border: 1px solid var(--border); overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .image-preview-item img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+
+    .image-preview-item.existing::after {
+      content: 'Actuelle';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.6); color: var(--white);
+      font-size: 0.5rem; text-align: center;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.2rem 0;
+    }
+
+    .image-preview-remove {
+      position: absolute; top: 2px; right: 2px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(0,0,0,0.6); color: var(--white);
+      border: none; font-size: 0.7rem; line-height: 1;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .image-preview-remove:hover { background: var(--error); }
+
+    .upload-progress {
+      font-size: 0.7rem; color: var(--gray); margin-top: 0.5rem;
+      display: none;
+    }
+    .upload-progress.show { display: block; }
+
+
+    .modal-footer {
+      display: flex; justify-content: flex-end; gap: 0.8rem;
+      padding: 1.5rem 2rem; border-top: 1px solid var(--border);
+    }
+
+    .msg { font-size: 0.75rem; padding: 0.75rem 1rem; display: none; margin-bottom: 1rem; }
+    .msg.error   { background: #fdf0ef; color: var(--error);   border-left: 3px solid var(--error);   display: block; }
+    .msg.success { background: #edfaf2; color: var(--success); border-left: 3px solid var(--success); display: block; }
+
+    /* ── VIEWS ────────────────────────────────────── */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ── MESSAGERIE (conversations + fil) ─────────── */
+    .messages-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      border: 1px solid var(--border);
+      background: var(--white);
+      min-height: 560px;
+    }
+
+    /* Liste des conversations */
+    .conversations-list {
+      border-right: 1px solid var(--border);
+      max-height: 650px;
+      overflow-y: auto;
+    }
+
+    .conversation-item {
+      padding: 1rem 1.3rem;
+      border-bottom: 1px solid var(--border);
+      border-left: 3px solid transparent;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .conversation-item:hover  { background: var(--light); }
+    .conversation-item.active { background: var(--light); border-left-color: var(--gold); }
+    .conversation-item:last-child { border-bottom: none; }
+
+    .conversation-property {
+      font-size: 0.78rem; font-weight: 400; color: var(--black);
+      margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.4rem;
+    }
+    .conversation-item.unread .conversation-property { font-weight: 600; }
+
+    .conversation-unread-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gold); flex-shrink: 0;
+    }
+
+    .conversation-other {
+      font-size: 0.62rem; font-weight: 500; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 0.35rem;
+    }
+
+    .conversation-preview {
+      font-size: 0.73rem; color: var(--gray); line-height: 1.5;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 0.3rem;
+    }
+
+    .conversation-date {
+      font-size: 0.6rem; color: var(--gray); letter-spacing: 0.05em;
+    }
+
+    /* Fil de discussion */
+    .conversation-thread {
+      display: flex; flex-direction: column; height: 650px;
+    }
+
+    .thread-header {
+      padding: 1.2rem 1.8rem; border-bottom: 1px solid var(--border);
+    }
+    .thread-header-title { font-family: var(--serif); font-size: 1.25rem; font-weight: 400; }
+    .thread-header-sub {
+      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--gold); margin-top: 0.3rem;
+    }
+
+    .thread-messages {
+      flex: 1; overflow-y: auto; padding: 1.5rem 1.8rem;
+      display: flex; flex-direction: column; gap: 0.9rem;
+    }
+
+    .thread-bubble {
+      max-width: 70%; padding: 0.8rem 1.1rem;
+      font-size: 0.8rem; line-height: 1.65;
+      word-wrap: break-word;
+    }
+    .thread-bubble.from-client {
+      align-self: flex-start;
+      background: var(--light); color: var(--black);
+      border: 1px solid var(--border);
+    }
+    .thread-bubble.from-agent {
+      align-self: flex-end;
+      background: var(--black); color: var(--white);
+    }
+    .thread-bubble-meta {
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.15em;
+      text-transform: uppercase; margin-bottom: 0.4rem; opacity: 0.55;
+    }
+
+    .thread-empty {
+      display: flex; align-items: center; justify-content: center;
+      height: 100%; text-align: center; padding: 2rem;
+      font-family: var(--serif); font-size: 1.2rem; font-style: italic;
+      color: var(--gray);
+    }
+
+    .thread-reply {
+      border-top: 1px solid var(--border);
+      padding: 1.2rem 1.8rem;
+      display: flex; gap: 1rem; align-items: flex-end;
+    }
+
+    .thread-reply textarea {
+      flex: 1; font-family: var(--sans); font-size: 0.82rem; font-weight: 300;
+      padding: 0.7rem; border: 1px solid var(--border); background: var(--light);
+      color: var(--black); outline: none; resize: none;
+      transition: border-color 0.2s;
+    }
+    .thread-reply textarea:focus { border-color: var(--black); background: var(--white); }
+    .thread-reply textarea::placeholder { color: #bbb; }
+
+    .thread-reply .btn-primary { flex-shrink: 0; padding: 0.85rem 1.6rem; }
+    .thread-reply .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── LOADING ──────────────────────────────────── */
+    .loading-state {
+      padding: 4rem; text-align: center;
+      font-family: var(--serif); font-size: 1.3rem;
+      color: var(--gray); font-style: italic;
+    }
+
+    /* ── RESPONSIVE ───────────────────────────────── */
+    @media (max-width: 1024px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .messages-layout { grid-template-columns: 1fr; }
+      .conversations-list { border-right: none; border-bottom: 1px solid var(--border); max-height: 260px; }
+      .conversation-thread { height: 480px; }
+    }
+    @media (max-width: 640px) {
+      .main { padding: 1.5rem; }
+      .kpi-grid { grid-template-columns: 1fr; }
+      .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      th, td { padding: 0.7rem 0.9rem; font-size: 0.72rem; }
+      .thread-bubble { max-width: 88%; }
+      .thread-reply { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">YM<span>M</span>O</a>
+
+    <p class="sidebar-section">Espace Agent</p>
+    <nav class="sidebar-nav">
+      <a class="sidebar-link active" data-view="overview" onclick="switchView('overview', this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Vue d'ensemble
+      </a>
+      <a class="sidebar-link" data-view="properties" onclick="switchView('properties', this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a1 1 0 01-1 1H4a1 1 0 01-1-1z"/></svg>
+        Mes biens
+      </a>
+      <a class="sidebar-link" data-view="messages" onclick="switchView('messages', this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.4 8.4 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+        Messages
+        <span class="sidebar-badge" id="unread-badge" style="display:none">0</span>
+      </a>
+    </nav>
+
+    <p class="sidebar-section">Plateforme</p>
+    <nav class="sidebar-nav">
+      <a href="properties.html" class="sidebar-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        Voir le site public
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="user-avatar">A</div>
+        <div>
+          <div class="sidebar-username" id="user-name">—</div>
+          <div class="sidebar-userrole" id="user-role">—</div>
+        </div>
+      </div>
+      <button class="sidebar-logout" onclick="logout()">Se déconnecter</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ═══ VUE D'ENSEMBLE ═══ -->
+    <div class="view active" id="view-overview">
+      <div class="page-header">
+        <div>
+          <p class="page-eyebrow">Tableau de bord</p>
+          <h1 class="page-title">Vue d'ensemble</h1>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Mes biens</div>
+          <div class="kpi-value" id="kpi-total">—</div>
+          <div class="kpi-sub" id="kpi-total-sub">&nbsp;</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Disponibles</div>
+          <div class="kpi-value" id="kpi-available">—</div>
+          <div class="kpi-sub positive" id="kpi-available-sub">&nbsp;</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Vues totales</div>
+          <div class="kpi-value" id="kpi-views">—</div>
+          <div class="kpi-sub" id="kpi-views-sub">&nbsp;</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Messages non lus</div>
+          <div class="kpi-value" id="kpi-unread">—</div>
+          <div class="kpi-sub alert" id="kpi-unread-sub">&nbsp;</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Biens les plus consultés</h2>
+        </div>
+        <table>
+          <thead>
+          <tr><th>Bien</th><th>Ville</th><th>Prix</th><th>Statut</th><th>Vues</th></tr>
+          </thead>
+          <tbody id="top-properties-body">
+          <tr class="empty-row"><td colspan="5">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ MES BIENS ═══ -->
+    <div class="view" id="view-properties">
+      <div class="page-header">
+        <div>
+          <p class="page-eyebrow">Gestion</p>
+          <h1 class="page-title">Mes biens</h1>
+        </div>
+        <button class="btn-primary" onclick="openPropertyModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Ajouter un bien
+        </button>
+      </div>
+
+      <div class="panel">
+        <table>
+          <thead>
+          <tr><th>Bien</th><th>Ville</th><th>Prix</th><th>Surface</th><th>Statut</th><th>Vues</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="properties-body">
+          <tr class="empty-row"><td colspan="7">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ MESSAGES ═══ -->
+    <div class="view" id="view-messages">
+      <div class="page-header">
+        <div>
+          <p class="page-eyebrow">Boîte de réception</p>
+          <h1 class="page-title">Messages</h1>
+        </div>
+      </div>
+
+      <div class="messages-layout">
+        <div class="conversations-list" id="conversations-list">
+          <div class="loading-state">Chargement…</div>
+        </div>
+        <div class="conversation-thread" id="conversation-thread">
+          <div class="thread-empty">Sélectionnez une conversation</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL — Ajouter / Modifier un bien -->
+<div class="modal-overlay" id="property-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">Ajouter un bien</h2>
+      <button class="modal-close" onclick="closePropertyModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="msg" id="modal-msg"></div>
+      <div class="form-grid">
+        <div class="field full">
+          <label>Titre</label>
+          <input type="text" id="f-title" placeholder="Appartement T3 avec vue mer"/>
+        </div>
+        <div class="field full">
+          <label>Description</label>
+          <textarea id="f-description" rows="3" placeholder="Description détaillée du bien (20 caractères min.)"></textarea>
+        </div>
+        <div class="field">
+          <label>Type</label>
+          <select id="f-type">
+            <option value="apartment">Appartement</option>
+            <option value="house">Maison</option>
+            <option value="office">Bureau</option>
+            <option value="commercial">Local commercial</option>
+            <option value="land">Terrain</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Transaction</label>
+          <select id="f-transaction">
+            <option value="sale">Vente</option>
+            <option value="rental">Location</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Prix (€)</label>
+          <input type="number" id="f-price" placeholder="250000"/>
+        </div>
+        <div class="field">
+          <label>Surface (m²)</label>
+          <input type="number" id="f-surface" placeholder="65"/>
+        </div>
+        <div class="field">
+          <label>Pièces</label>
+          <input type="number" id="f-rooms" placeholder="3"/>
+        </div>
+        <div class="field">
+          <label>Chambres</label>
+          <input type="number" id="f-bedrooms" placeholder="2"/>
+        </div>
+        <div class="field full">
+          <label>Adresse</label>
+          <input type="text" id="f-address" placeholder="12 rue de la République"/>
+        </div>
+        <div class="field">
+          <label>Ville</label>
+          <input type="text" id="f-city" placeholder="Aix-en-Provence"/>
+        </div>
+        <div class="field">
+          <label>Code postal</label>
+          <input type="text" id="f-zipcode" placeholder="13100" maxlength="5"/>
+        </div>
+        <div class="field full" id="f-status-field" style="display:none">
+          <label>Statut</label>
+          <select id="f-status">
+            <option value="available">Disponible</option>
+            <option value="pending">Sous compromis</option>
+            <option value="sold">Vendu</option>
+            <option value="rented">Loué</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Photos <span style="color:#ccc;font-size:0.55rem">(jpg, png, webp — plusieurs possibles)</span></label>
+          <input type="file" id="f-images" accept="image/jpeg,image/png,image/webp" multiple onchange="previewImages(this)"/>
+          <div id="image-preview" class="image-preview"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" onclick="closePropertyModal()">Annuler</button>
+      <button class="btn-primary" id="modal-submit" onclick="submitProperty()">Créer le bien</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = 'http://localhost:8081/api/v1';
+  let editingId = null;
+  let allProperties = [];
+  let allConversations = [];
+  let activeConversation = null;
+
+  // ── Auth guard ──────────────────────────────────
+  function getToken() { return sessionStorage.getItem('ymmo_token'); }
+  function getUser() {
+    const u = sessionStorage.getItem('ymmo_user');
+    return u ? JSON.parse(u) : null;
+  }
+
+  function logout() {
+    sessionStorage.removeItem('ymmo_token');
+    sessionStorage.removeItem('ymmo_user');
+    window.location.href = 'login.html';
+  }
+
+  function checkAuth() {
+    const token = getToken();
+    const user  = getUser();
+    if (!token || !user) {
+      window.location.href = 'login.html';
+      return null;
+    }
+    if (user.role !== 'agent' && user.role !== 'admin') {
+      window.location.href = 'properties.html';
+      return null;
+    }
+    return user;
+  }
+
+  function authHeaders() {
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getToken()}`
+    };
+  }
+
+  // ── Formatage ───────────────────────────────────
+  function formatPrice(price, transaction) {
+    const f = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(price);
+    return transaction === 'rental' ? f + ' / mois' : f;
+  }
+
+  function statusLabel(s) {
+    return { available: 'Disponible', sold: 'Vendu', rented: 'Loué', pending: 'Sous compromis' }[s] || s;
+  }
+  function statusClass(s) {
+    return { available: 'badge-available', sold: 'badge-sold', rented: 'badge-rented', pending: 'badge-pending' }[s] || '';
+  }
+
+  // ── Navigation entre vues ────────────────────────
+  function switchView(view, el) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(`view-${view}`).classList.add('active');
+
+    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+    if (el) el.classList.add('active');
+
+    if (view === 'properties') loadProperties();
+    if (view === 'messages')   loadMessages();
+    if (view === 'overview')   loadOverview();
+  }
+
+  // ── Vue d'ensemble ────────────────────────────────
+  async function loadOverview() {
+    try {
+      const res = await fetch(`${API}/properties?limit=100`, { headers: authHeaders() });
+      const data = await res.json();
+      const user = getUser();
+
+      // Un admin voit tous les biens, un agent ne voit que les siens
+      const list = user.role === 'admin'
+              ? (data.data || [])
+              : (data.data || []).filter(p => p.agent_id === user.id);
+
+      const total     = list.length;
+      const available = list.filter(p => p.status === 'available').length;
+      const totalViews = list.reduce((sum, p) => sum + (p.view_count || 0), 0);
+
+      document.getElementById('kpi-total').textContent     = total;
+      document.getElementById('kpi-available').textContent = available;
+      document.getElementById('kpi-views').textContent     = totalViews;
+      document.getElementById('kpi-total-sub').textContent     = `${total} bien${total !== 1 ? 's' : ''} au total`;
+      document.getElementById('kpi-available-sub').textContent = `${available} prêt${available !== 1 ? 's' : ''} à vendre`;
+      document.getElementById('kpi-views-sub').textContent     = 'Toutes annonces confondues';
+
+      // Top 5 par vues
+      const top = [...list].sort((a, b) => (b.view_count || 0) - (a.view_count || 0)).slice(0, 5);
+      const tbody = document.getElementById('top-properties-body');
+
+      if (top.length === 0) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Aucun bien pour le moment</td></tr>';
+      } else {
+        tbody.innerHTML = top.map(p => `
+            <tr>
+              <td class="cell-title">${p.title}</td>
+              <td>${p.city}</td>
+              <td>${formatPrice(p.price, p.transaction)}</td>
+              <td><span class="badge ${statusClass(p.status)}">${statusLabel(p.status)}</span></td>
+              <td>${p.view_count || 0}</td>
+            </tr>
+          `).join('');
+      }
+
+      // Messages non lus
+      loadUnreadCount();
+
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function loadUnreadCount(items = null) {
+    try {
+      if (!items) {
+        const res = await fetch(`${API}/agent/messages`, { headers: authHeaders() });
+        if (!res.ok) return;
+        items = await res.json();
+      }
+
+      // Seuls les messages envoyés par un CLIENT et non lus comptent
+      // pour le badge agent (ses propres réponses ne comptent pas)
+      const unread = (items || []).filter(m => m.sender_role === 'client' && !m.is_read).length;
+
+      document.getElementById('kpi-unread').textContent = unread;
+      document.getElementById('kpi-unread-sub').textContent = unread > 0 ? 'À traiter' : 'Tout est lu';
+
+      const badge = document.getElementById('unread-badge');
+      if (unread > 0) {
+        badge.textContent = unread;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    } catch {}
+  }
+
+  // ── Mes biens ────────────────────────────────────
+  async function loadProperties() {
+    const tbody = document.getElementById('properties-body');
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Chargement…</td></tr>';
+
+    try {
+      const res = await fetch(`${API}/properties?limit=100`, { headers: authHeaders() });
+      const data = await res.json();
+      const user = getUser();
+
+      // Un admin voit tous les biens, un agent ne voit que les siens
+      allProperties = user.role === 'admin'
+              ? (data.data || [])
+              : (data.data || []).filter(p => p.agent_id === user.id);
+
+      if (allProperties.length === 0) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Aucun bien — cliquez sur "Ajouter un bien" pour commencer</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = allProperties.map(p => `
+          <tr>
+            <td>
+              <div class="cell-title">${p.title}</div>
+              <div class="cell-sub">#${String(p.id).padStart(5,'0')} · ${p.rooms} pièces</div>
+            </td>
+            <td>${p.city}</td>
+            <td>${formatPrice(p.price, p.transaction)}</td>
+            <td>${p.surface} m²</td>
+            <td><span class="badge ${statusClass(p.status)}">${statusLabel(p.status)}</span></td>
+            <td>${p.view_count || 0}</td>
+            <td>
+              <div class="actions">
+                <button class="icon-btn" title="Voir" onclick="window.open('property.html?id=${p.id}','_blank')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                <button class="icon-btn" title="Modifier" onclick="openPropertyModal(${p.id})">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="icon-btn danger" title="Supprimer" onclick="deleteProperty(${p.id})">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+    } catch (err) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Erreur de chargement</td></tr>';
+    }
+  }
+
+  // ── Modal Ajout / Édition ────────────────────────
+  function openPropertyModal(id = null) {
+    editingId = id;
+    const modal = document.getElementById('property-modal');
+    const msg   = document.getElementById('modal-msg');
+    msg.className = 'msg';
+
+    // Reset du champ fichier et de l'aperçu
+    document.getElementById('f-images').value = '';
+    const preview = document.getElementById('image-preview');
+    preview.innerHTML = '';
+
+    if (id) {
+      const p = allProperties.find(x => x.id === id);
+      if (!p) return;
+
+      document.getElementById('modal-title').textContent = 'Modifier le bien';
+      document.getElementById('modal-submit').textContent = 'Enregistrer';
+      document.getElementById('f-status-field').style.display = 'block';
+
+      document.getElementById('f-title').value       = p.title;
+      document.getElementById('f-description').value = p.description || '';
+      document.getElementById('f-type').value        = p.type;
+      document.getElementById('f-transaction').value = p.transaction;
+      document.getElementById('f-price').value       = p.price;
+      document.getElementById('f-surface').value     = p.surface;
+      document.getElementById('f-rooms').value       = p.rooms;
+      document.getElementById('f-bedrooms').value    = p.bedrooms || 0;
+      document.getElementById('f-address').value     = p.address || '';
+      document.getElementById('f-city').value        = p.city;
+      document.getElementById('f-zipcode').value     = p.zip_code;
+      document.getElementById('f-status').value      = p.status;
+
+      // Affiche les images existantes (lecture seule)
+      if (p.images && p.images.length > 0) {
+        preview.innerHTML = p.images.map(img => `
+            <div class="image-preview-item existing">
+              <img src="http://localhost:8081${img.url}" alt=""/>
+            </div>
+          `).join('');
+      }
+    } else {
+      document.getElementById('modal-title').textContent = 'Ajouter un bien';
+      document.getElementById('modal-submit').textContent = 'Créer le bien';
+      document.getElementById('f-status-field').style.display = 'none';
+
+      ['f-title','f-description','f-price','f-surface','f-rooms','f-bedrooms','f-address','f-city','f-zipcode']
+              .forEach(id => document.getElementById(id).value = '');
+      document.getElementById('f-type').value = 'apartment';
+      document.getElementById('f-transaction').value = 'sale';
+    }
+
+    modal.classList.add('show');
+  }
+
+  function closePropertyModal() {
+    document.getElementById('property-modal').classList.remove('show');
+    document.getElementById('f-images').value = '';
+    document.getElementById('image-preview').innerHTML = '';
+    editingId = null;
+  }
+
+  // ── Aperçu des nouvelles images sélectionnées ────
+  function previewImages(input) {
+    const preview = document.getElementById('image-preview');
+
+    // Si on édite, on garde les images existantes affichées,
+    // sinon on repart d'un aperçu vide
+    if (!editingId) preview.innerHTML = '';
+    else preview.querySelectorAll('.image-preview-item.new').forEach(el => el.remove());
+
+    Array.from(input.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const div = document.createElement('div');
+        div.className = 'image-preview-item new';
+        div.innerHTML = `<img src="${e.target.result}" alt=""/>`;
+        preview.appendChild(div);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function submitProperty() {
+    const msg = document.getElementById('modal-msg');
+    const btn = document.getElementById('modal-submit');
+
+    const payload = {
+      title: document.getElementById('f-title').value.trim(),
+      description: document.getElementById('f-description').value.trim(),
+      type: document.getElementById('f-type').value,
+      transaction: document.getElementById('f-transaction').value,
+      price: parseFloat(document.getElementById('f-price').value),
+      surface: parseFloat(document.getElementById('f-surface').value),
+      rooms: parseInt(document.getElementById('f-rooms').value),
+      bedrooms: parseInt(document.getElementById('f-bedrooms').value) || 0,
+      address: document.getElementById('f-address').value.trim(),
+      city: document.getElementById('f-city').value.trim(),
+      zip_code: document.getElementById('f-zipcode').value.trim(),
+    };
+
+    // Validation simple
+    if (!payload.title || payload.title.length < 5) {
+      return showModalMsg('Le titre doit contenir au moins 5 caractères.', 'error');
+    }
+    if (!payload.description || payload.description.length < 20) {
+      return showModalMsg('La description doit contenir au moins 20 caractères.', 'error');
+    }
+    if (!payload.price || payload.price <= 0) {
+      return showModalMsg('Le prix doit être supérieur à 0.', 'error');
+    }
+    if (!payload.surface || payload.surface <= 0) {
+      return showModalMsg('La surface doit être supérieure à 0.', 'error');
+    }
+    if (!payload.rooms || payload.rooms < 1) {
+      return showModalMsg('Le nombre de pièces doit être au moins 1.', 'error');
+    }
+    if (!payload.address || !payload.city) {
+      return showModalMsg('Adresse et ville sont obligatoires.', 'error');
+    }
+    if (!/^\d{5}$/.test(payload.zip_code)) {
+      return showModalMsg('Le code postal doit contenir 5 chiffres.', 'error');
+    }
+
+    if (editingId) {
+      payload.status = document.getElementById('f-status').value;
+    }
+
+    btn.disabled = true;
+    btn.textContent = editingId ? 'Enregistrement…' : 'Création…';
+
+    try {
+      const url    = editingId ? `${API}/properties/${editingId}` : `${API}/properties`;
+      const method = editingId ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: authHeaders(),
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        showModalMsg(data.error || 'Une erreur est survenue.', 'error');
+        return;
+      }
+
+      // ID du bien : data.id si création, editingId si édition
+      const propertyId = editingId || data.id;
+
+      // Upload des images sélectionnées, s'il y en a
+      const fileInput = document.getElementById('f-images');
+      if (fileInput.files && fileInput.files.length > 0) {
+        btn.textContent = 'Envoi des photos…';
+        const uploadOk = await uploadImages(propertyId, fileInput.files);
+        if (!uploadOk) {
+          // Le bien est créé/modifié mais l'upload a échoué — on informe sans bloquer
+          showModalMsg('Bien enregistré, mais l\'envoi des photos a échoué. Vous pouvez réessayer depuis "Modifier".', 'error');
+          loadProperties();
+          loadOverview();
+          return;
+        }
+      }
+
+      closePropertyModal();
+      loadProperties();
+      loadOverview();
+
+    } catch (err) {
+      showModalMsg('Erreur de connexion au serveur.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = editingId ? 'Enregistrer' : 'Créer le bien';
+    }
+  }
+
+  // ── Upload des images vers /properties/:id/images ─
+  async function uploadImages(propertyId, files) {
+    const formData = new FormData();
+    Array.from(files).forEach(file => formData.append('images', file));
+
+    try {
+      const res = await fetch(`${API}/properties/${propertyId}/images`, {
+        method: 'POST',
+        headers: {
+          // Pas de Content-Type ici : le navigateur le définit
+          // automatiquement avec la bonne boundary pour multipart/form-data
+          'Authorization': `Bearer ${getToken()}`
+        },
+        body: formData
+      });
+
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }
+
+  function showModalMsg(text, type) {
+    const msg = document.getElementById('modal-msg');
+    msg.className = `msg ${type}`;
+    msg.textContent = text;
+  }
+
+  async function deleteProperty(id) {
+    if (!confirm('Supprimer ce bien définitivement ?')) return;
+
+    try {
+      const res = await fetch(`${API}/properties/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders()
+      });
+
+      if (res.ok) {
+        loadProperties();
+        loadOverview();
+      } else {
+        alert('Erreur lors de la suppression.');
+      }
+    } catch {
+      alert('Erreur de connexion au serveur.');
+    }
+  }
+
+  // ── Messages / Conversations ──────────────────────
+  // Une conversation = tous les messages partageant le même
+  // (property_id, client_id) — l'agent_id est constant (= soi-même).
+
+  async function loadMessages() {
+    const list   = document.getElementById('conversations-list');
+    const thread = document.getElementById('conversation-thread');
+    list.innerHTML = '<div class="loading-state">Chargement…</div>';
+
+    try {
+      const res = await fetch(`${API}/agent/messages`, { headers: authHeaders() });
+      const items = await res.json();
+
+      if (!items || items.length === 0) {
+        list.innerHTML = '<div class="loading-state">Aucun message pour le moment</div>';
+        thread.innerHTML = '<div class="thread-empty">Aucune conversation</div>';
+        allConversations = [];
+        activeConversation = null;
+        loadUnreadCount(items);
+        return;
+      }
+
+      // Groupe les messages par conversation (property_id + client_id)
+      const groups = new Map();
+      for (const m of items) {
+        const key = `${m.property_id}-${m.client_id}`;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(m);
+      }
+
+      allConversations = Array.from(groups.entries()).map(([key, msgs]) => {
+        const last = msgs[msgs.length - 1];
+        return {
+          key,
+          propertyId: last.property_id,
+          propertyTitle: last.property_title,
+          otherPartyName: last.other_party_name,
+          messages: msgs,
+          lastMessage: last,
+        };
+      });
+
+      // Conversation la plus récente en premier
+      allConversations.sort((a, b) =>
+              new Date(b.lastMessage.created_at) - new Date(a.lastMessage.created_at)
+      );
+
+      renderConversationsList();
+
+      // Ré-ouvre la conversation déjà active si elle existe toujours,
+      // sinon ouvre la plus récente
+      const stillExists = activeConversation
+              ? allConversations.find(c => c.key === activeConversation.key)
+              : null;
+
+      if (stillExists) {
+        openConversation(stillExists.key, false);
+      } else if (allConversations.length > 0) {
+        openConversation(allConversations[0].key, false);
+      } else {
+        thread.innerHTML = '<div class="thread-empty">Sélectionnez une conversation</div>';
+      }
+
+      loadUnreadCount(items);
+
+    } catch (err) {
+      list.innerHTML = '<div class="loading-state">Erreur de chargement</div>';
+    }
+  }
+
+  function renderConversationsList() {
+    const list = document.getElementById('conversations-list');
+
+    if (allConversations.length === 0) {
+      list.innerHTML = '<div class="loading-state">Aucun message pour le moment</div>';
+      return;
+    }
+
+    list.innerHTML = allConversations.map(c => {
+      const hasUnread = c.messages.some(m => m.sender_role === 'client' && !m.is_read);
+      const isActive  = activeConversation && activeConversation.key === c.key;
+      const prefix    = c.lastMessage.sender_role === 'agent' ? 'Vous : ' : '';
+
+      return `
+          <div class="conversation-item ${isActive ? 'active' : ''} ${hasUnread ? 'unread' : ''}"
+               onclick="openConversation('${c.key}')">
+            <div class="conversation-property">
+              ${hasUnread ? '<span class="conversation-unread-dot"></span>' : ''}
+              ${escapeHtml(c.propertyTitle)}
+            </div>
+            <div class="conversation-other">${escapeHtml(c.otherPartyName)}</div>
+            <div class="conversation-preview">${prefix}${escapeHtml(c.lastMessage.message)}</div>
+            <div class="conversation-date">${new Date(c.lastMessage.created_at).toLocaleString('fr-FR')}</div>
+          </div>
+        `;
+    }).join('');
+  }
+
+  function openConversation(key, scrollToBottom = true) {
+    const conv = allConversations.find(c => c.key === key);
+    if (!conv) return;
+
+    activeConversation = conv;
+    renderConversationsList();
+    renderThread(conv);
+
+    if (scrollToBottom) {
+      const msgsEl = document.getElementById('thread-messages');
+      if (msgsEl) msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
+
+    // Marque comme lus les messages du client non encore lus par l'agent
+    const unread = conv.messages.filter(m => m.sender_role === 'client' && !m.is_read);
+    if (unread.length > 0) {
+      unread.forEach(m => {
+        m.is_read = true;
+        markMessageAsRead(m.id);
+      });
+      renderConversationsList();
+      loadUnreadCount(allConversations.flatMap(c => c.messages));
+    }
+  }
+
+  function renderThread(conv) {
+    const thread = document.getElementById('conversation-thread');
+
+    thread.innerHTML = `
+        <div class="thread-header">
+          <div class="thread-header-title">${escapeHtml(conv.propertyTitle)}</div>
+          <div class="thread-header-sub">Conversation avec ${escapeHtml(conv.otherPartyName)}</div>
+        </div>
+        <div class="thread-messages" id="thread-messages">
+          ${conv.messages.map(m => `
+            <div class="thread-bubble from-${m.sender_role}">
+              <div class="thread-bubble-meta">
+                ${m.sender_role === 'agent' ? 'Vous' : escapeHtml(conv.otherPartyName)}
+                · ${new Date(m.created_at).toLocaleString('fr-FR')}
+              </div>
+              ${escapeHtml(m.message)}
+            </div>
+          `).join('')}
+        </div>
+        <div class="thread-reply">
+          <textarea id="reply-text" rows="2" placeholder="Écrire une réponse…"
+                    onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendReply();}"></textarea>
+          <button class="btn-primary" onclick="sendReply()">Envoyer</button>
+        </div>
+      `;
+
+    const msgsEl = document.getElementById('thread-messages');
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
+  async function sendReply() {
+    if (!activeConversation) return;
+
+    const textarea = document.getElementById('reply-text');
+    const text = textarea.value.trim();
+    if (!text) return;
+
+    const btn = document.querySelector('.thread-reply .btn-primary');
+    btn.disabled = true;
+    btn.textContent = 'Envoi…';
+
+    // On répond via l'ID de n'importe quel message du fil — le backend
+    // retrouve la conversation complète (property_id, client_id, agent_id).
+    const anchorId = activeConversation.messages[0].id;
+
+    try {
+      const res = await fetch(`${API}/messages/${anchorId}/reply`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ message: text })
+      });
+
+      if (res.ok) {
+        textarea.value = '';
+        await loadMessages();
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Erreur lors de l\'envoi du message.');
+      }
+    } catch {
+      alert('Erreur de connexion au serveur.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Envoyer';
+    }
+  }
+
+  async function markMessageAsRead(id) {
+    try {
+      await fetch(`${API}/messages/${id}/read`, {
+        method: 'PATCH',
+        headers: authHeaders()
+      });
+    } catch {}
+  }
+
+  // Échappe le HTML pour éviter toute injection via le contenu des messages
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str ?? '';
+    return div.innerHTML;
+  }
+
+  // ── Init ────────────────────────────────────────
+  function init() {
+    const user = checkAuth();
+    if (!user) return;
+
+    document.getElementById('user-name').textContent = `${user.first_name} ${user.last_name}`;
+    document.getElementById('user-role').textContent = user.role;
+    document.getElementById('user-avatar').textContent = (user.first_name?.[0] || '') + (user.last_name?.[0] || '');
+
+    loadOverview();
+  }
+
+  init();
+</script>
+</body>
+</html>
